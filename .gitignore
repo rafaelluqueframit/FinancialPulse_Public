@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# Backend (si generas algo más)
+*.db
+*.sqlite3
+instance/
+.env
+
+# Frontend (Angular)
+node_modules/
+dist/
+.tmp/
+.angular/
+
+# Docker
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
