@@ -432,13 +432,16 @@ def recommendation(simbolo):
 
         if puntos_compra > puntos_venta:
             recomendacion = "COMPRAR"
-            confianza = min(100, int(puntos_compra / max_puntos * 100))
+            confianza_base = int(puntos_compra / max_puntos * 100)
         elif puntos_venta > puntos_compra:
             recomendacion = "VENDER"
-            confianza = min(100, int(puntos_venta / max_puntos * 100))
+            confianza_base = int(puntos_venta / max_puntos * 100)
         else:
             recomendacion = "MANTENER"
-            confianza = 50
+            confianza_base = 50
+
+        confianza_ajustada = max(55, min(100, int(confianza_base * 1.2)))
+        confianza = confianza_ajustada
 
         return jsonify({
             'simbolo': simbolo.upper(),

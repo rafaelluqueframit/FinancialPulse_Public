@@ -1,49 +1,82 @@
 = Evaluación y pruebas
 
-En este capítulo se describe el proceso de verificación y validación del
-software desarrollado. Se han ejecutado pruebas unitarias, de integración, de
-aceptación, de rendimiento y de usabilidad para garantizar el correcto
-funcionamiento de los módulos principales y el cumplimiento de los requisitos
-funcionales y no funcionales. Debido a la complejidad del proyecto y las
-limitaciones de tiempo, la cobertura no es exhaustiva, pero se han verificado
-todos los flujos críticos.
+En este capítulo se describe cómo se evaluó el software desarrollado, incluyendo
+las pruebas realizadas, los resultados obtenidos y las conclusiones derivadas.
+Se detallan las pruebas unitarias, de integración, de aceptación, de rendimiento
+y de usabilidad, así como las herramientas utilizadas y los criterios de éxito.
+Se analizan los resultados obtenidos, se identifican las limitaciones y se
+proponen mejoras para futuras versiones del sistema.
 
 == Plan de pruebas
 
-El plan de pruebas se ha diseñado siguiendo una estrategia combinada:
+El plan combinó distintos enfoques, intentando cubrir las partes más importantes
+del sistema:
 
-- *Pruebas unitarias*: Se probaron aisladamente los modelos de base de datos
-  (SQLAlchemy), las funciones auxiliares (cálculo de RSI, Prophet, sentimiento)
-  y algunos endpoints (registro, login). En el frontend se probaron el
-  `TranslatePipe` y la directiva de tooltip.
-- *Pruebas de integración*: Se verificó la comunicación entre frontend y backend
-  mediante peticiones reales a la API (usando Postman y `pytest` con cliente de
-  pruebas) y la correcta interacción con la base de datos PostgreSQL.
-- *Pruebas de aceptación*: Se simularon casos de uso completos (registro, login,
+- *Pruebas unitarias*: se probó las funciones auxiliares del backend (cálculo de
+  RSI, Prophet, análisis de sentimiento) ejecutando pequeños scripts Python con
+  datos de prueba. En el frontend se realizaron pruebas manuales del
+  `TranslatePipe` y de la directiva de tooltip: cambiando el idioma y mirando si
+  todo se traducía correctamente.
+- *Pruebas de integración*: se comprobó la comunicación entre frontend y backend
+  usando Thunder Client, y también que la base de datos se actualizara bien
+  (observando los cambios en las tablas tras cada operación: registro, compra,
+  etc.).
+- *Pruebas de aceptación*: se simularon casos de uso completos (registro, login,
   búsqueda de activo, compra/venta, análisis de sentimiento, exportación de
-  datos) para comprobar que el sistema se comporta como se espera desde la
-  perspectiva del usuario.
-- *Pruebas de rendimiento*: Se realizaron pruebas de carga básicas sobre el
-  endpoint más crítico (`/api/dashboard`).
-- *Pruebas de usabilidad*: Se solicitó feedback a tres voluntarios.
+  datos) para asegurarse de que el sistema se comportaba como esperaría un
+  usuario real.
+- *Pruebas de usabilidad*: se solicitó a cuatro voluntarios que usaran la
+  aplicación y trasladaran su opinión mediante un cuestionario de Google Forms.
 
 === Herramientas utilizadas
 
-- *Backend*: `pytest`, `pytest-cov` para cobertura, `Flask-Testing` para cliente
-  de pruebas.
-- *Frontend*: Karma, Jasmine y `@angular/cli` para pruebas unitarias.
-- *API*: Postman para pruebas manuales y automatización de flujos.
-- *Carga*: Apache Benchmark (ab) y `locust` (prueba sencilla).
-- *CI/CD*: GitHub Actions (workflow básico para backend).
+- *Backend*: scripts Python sencillos (sin framework) para probar las funciones
+  una por una. Se optó por no usar librerías de testing debido a que no eran
+  necesarias.
+- *Frontend*: se realizaron pruebas manuales de componentes y pipes (cambiar
+  idioma, mirar tooltips). Nada automático, pero suficiente para lo que se
+  requería.
+- *API*: Thunder Client (una extensión de VSCode) para probar los endpoints y
+  flujos completos. Se optó por esta vía antes que instalar Postman, ya que
+  Thunder Client es más ligero y se integra directamente en el IDE.
+- *Usabilidad*: se realizó un cuestionario en Google Forms con escala Likert,
+  que luego se analizó con una hoja de cálculo.
 
 == Pruebas unitarias
 
-Las pruebas unitarias se centraron en los modelos de la base de datos, en los
-endpoints de autenticación y en las funciones auxiliares de indicadores.
+En cuanto a las pruebas unitarias, se verificó que las funciones críticas del
+backend devolvían resultados correctos con datos de prueba conocidos. Las
+pruebas se realizaron de forma manual, sin frameworks automáticos. Me centré en
+los modelos de la base de datos, en los endpoints de autenticación y en las
+funciones de indicadores.
 
 === Backend
 
-A continuación se muestra una prueba unitaria para el registro de usuario:
+Se desarrollaron pequeños scripts en Python para probar, por ejemplo, el cálculo
+del RSI. A contuniación, en el Listado 7.1 se muestra uno de ellos:
+
+#figure(
+  ```python
+  import pandas as pd
+  from app import calcular_rsi
+
+  precios = pd.Series([44.34, 44.09, 44.15, 43.61, 44.33, 44.83, 45.10,
+                       45.42, 45.84, 46.08, 45.89, 46.03, 45.61, 46.28,
+                       46.28, 46.00, 46.03, 46.41, 46.22, 45.64])
+  rsi = calcular_rsi(precios, period=14).iloc[-1]
+  print(f"RSI calculado: {rsi}")  # Se verificó que el valor rondaba 70
+  ```,
+  caption: [Prueba manual de la función `calcular_rsi`.],
+) <code:test_rsi_manual>
+
+De forma similar se probó `calcular_macd`, `calcular_bollinger`, la predicción
+con Prophet y el análisis de sentimiento con frases de ejemplo en inglés y
+español. En todos los casos los resultados eran coherentes con lo esperado.
+
+También se realizó una prueba para el registro de usuario, simulando una
+petición HTTP con un cliente de pruebas. En el Listado 7.2 se muestra un ejemplo
+de cómo se verificó que al registrar un usuario se creaba correctamente la
+cartera asociada:
 
 #figure(
   ```python
@@ -55,7 +88,6 @@ A continuación se muestra una prueba unitaria para el registro de usuario:
       })
       assert response.status_code == 201
       assert response.json['message'] == 'Usuario registrado con éxito'
-      # Verificar que se creó la cartera con saldo 10000
       user = Usuario.query.filter_by(email='test@example.com').first()
       assert user is not None
       cartera = Cartera.query.filter_by(usuario_id=user.id).first()
@@ -64,7 +96,10 @@ A continuación se muestra una prueba unitaria para el registro de usuario:
   caption: [Prueba unitaria para el registro de usuario.],
 ) <code:test_registro>
 
-También se probó el cálculo del RSI con una serie de precios conocida:
+Y otro para el cálculo del RSI con valores conocidos, aunque este último es casi
+igual que el anterior pero con un `assert` en lugar de un `print`. En el Listado
+7.3 se muestra cómo se verificó que el RSI calculado estaba dentro del rango
+esperado:
 
 #figure(
   ```python
@@ -73,7 +108,6 @@ También se probó el cálculo del RSI con una serie de precios conocida:
                            45.42, 45.84, 46.08, 45.89, 46.03, 45.61, 46.28,
                            46.28, 46.00, 46.03, 46.41, 46.22, 45.64])
       rsi = calcular_rsi(precios, period=14).iloc[-1]
-      # El valor esperado aproximado es ~70.5 (depende de la implementación)
       assert 65 < rsi < 75
   ```,
   caption: [Prueba unitaria para la función `calcular_rsi`.],
@@ -81,86 +115,51 @@ También se probó el cálculo del RSI con una serie de precios conocida:
 
 === Frontend
 
-En el frontend se probó el `TranslatePipe` con los dos idiomas disponibles:
-
-#figure(
-  ```typescript
-  describe('TranslatePipe', () => {
-    let pipe: TranslatePipe;
-    let languageService: LanguageService;
-    beforeEach(() => {
-      languageService = new LanguageService();
-      pipe = new TranslatePipe(languageService);
-    });
-    it('debe traducir "login.title" al español', () => {
-      languageService.setLanguage('es');
-      expect(pipe.transform('login.title')).toBe('Iniciar sesión');
-    });
-    it('debe traducir "login.title" al inglés', () => {
-      languageService.setLanguage('en');
-      expect(pipe.transform('login.title')).toBe('Login');
-    });
-  });
-  ```,
-  caption: [Prueba unitaria del pipe de traducción.],
-) <code:test_pipe>
-
-Los resultados fueron satisfactorios: todos los modelos y funciones auxiliares
-superaron las pruebas, logrando una *cobertura del 78%* en el backend (medido
-con `pytest-cov`) y del *65%* en el frontend.
+Para probar el `TranslatePipe`, se arrancó la aplicación Angular y se cambió el
+idioma varias veces. Se comprobó que todas las etiquetas se actualizaban
+correctamente, tanto en español como en inglés. La directiva `TooltipDirective`
+se probó haciendo hover sobre los nombres de los indicadores y comprobando que
+aparecía el texto de ayuda traducido. Las pruebas fueron exitosas, dando por
+finalizada esa funcionalidad.
 
 == Pruebas de integración
 
-Las pruebas de integración verificaron la comunicación entre el frontend
-(simulado mediante cliente HTTP) y los endpoints reales del backend, incluyendo
-la autenticación por sesión. A continuación se muestra una prueba que comprueba
-el flujo completo de compra de una acción:
+Las pruebas de integración se realizaron manualmente con Thunder Client. Se
+simuló el flujo completo de compra de una acción paso a paso, para asegurarse de
+que los distintos componentes del sistema hablaban bien entre ellos.
 
-#figure(
-  ```python
-  def test_comprar_accion_integracion(client):
-      # 1. Registrar usuario
-      client.post('/api/register', json={
-          'nombre': 'Inversor',
-          'email': 'inversor@test.com',
-          'password': 'test123'
-      })
-      # 2. Login para obtener sesión
-      login_res = client.post('/api/login', json={
-          'email': 'inversor@test.com',
-          'password': 'test123'
-      })
-      assert login_res.status_code == 200
-      # 3. Obtener cartera (saldo inicial 10000)
-      cartera_res = client.get('/api/cartera')
-      assert cartera_res.json['saldo'] == 10000.0
-      # 4. Comprar 5 acciones de AAPL a precio simulado
-      compra_res = client.post('/api/comprar', json={
-          'simbolo': 'AAPL',
-          'cantidad': 5,
-          'precio': 175.50
-      })
-      assert compra_res.status_code == 200
-      assert compra_res.json['nuevo_saldo'] == 10000.0 - 5 * 175.50
-      # 5. Verificar transacción creada
-      transacciones_res = client.get('/api/transacciones')
-      assert len(transacciones_res.json) == 1
-      assert transacciones_res.json[0]['tipo'] == 'compra'
-  ```,
-  caption: [Prueba de integración para el flujo de compra de acciones.],
-) <code:test_compra_integracion>
+1. Se registró un nuevo usuario con POST a `/api/register`.
+2. Se inició sesión con POST a `/api/login` y se guardó la cookie de sesión
+  (Thunder Client la maneja automáticamente).
+3. Se consultó la cartera con GET a `/api/cartera` para comprobar que el saldo
+  inicial era 10000.
+4. Se realizó una compra de 5 acciones de AAPL con POST a `/api/comprar`,
+  enviando `{"simbolo":"AAPL","cantidad":5,"precio":175.50}`.
+5. Se volvió a consultar la cartera para ver que el saldo se había reducido en
+  877.50.
+6. Se pidió el listado de transacciones con GET a `/api/transacciones` y se
+  comprobó que aparecía una compra.
 
-Se detectó un error inicial de concurrencia cuando se realizaban múltiples
-compras rápidas desde el mismo usuario. Se solucionó agregando un bloqueo
-pesimista con `with_for_update()` en la consulta de la cartera dentro de la
-transacción. También se corrigió un error en la validación del email duplicado
-durante el registro.
+Todas las peticiones devolvieron código 200 y los datos se actualizaron
+correctamente en la base de datos PostgreSQL. Además, se revisó visualmente la
+tabla `transaccion` para confirmar que se había insertado el registro.
+
+Durante estas pruebas se detectó un error de concurrencia: si se realizabam dos
+compras rápidas seguidas, a veces se actualizaba mal el saldo. Se solucionó
+añadiendo un bloqueo pesimista con `with_for_update()` en la consulta de la
+cartera dentro de la transacción. También se corrigió un error en la validación
+del email duplicado durante el registro (el mensaje de error no se mostraba bien
+en el frontend).
 
 == Pruebas de aceptación
 
-Se definieron los casos de uso críticos (los mismos que los casos de uso del
-capítulo 5) y se ejecutaron manualmente mediante un script de Postman y
-verificación visual en el frontend. La siguiente tabla resume los resultados:
+Se definieron los casos de uso críticos (los mismos que en el capítulo 5) y se
+ejecutaron paso a paso, verificando que el sistema respondía correctamente y que
+los datos se actualizaban en la base de datos. Se comprobó que los endpoints
+devolvían los códigos de estado esperados y que el frontend reflejaba los
+cambios. Se documentaron los resultados de cada caso de uso, incluyendo
+cualquier error encontrado y cómo se resolvió. La siguiente Tabla 7.1 resume los
+resultados:
 
 #figure(
   table(
@@ -206,115 +205,165 @@ verificación visual en el frontend. La siguiente tabla resume los resultados:
   caption: [Resultados de las pruebas de aceptación.],
 ) <tabla:pruebas_aceptacion>
 
-Todos los casos de uso críticos superaron las pruebas. El único inconveniente
-fue la latencia del modelo de sentimiento en español (aproximadamente 1.5
-segundos por noticia), que se mitigará en futuras versiones cacheando
-resultados.
+Todos los casos de uso críticos salieron bien. El único inconveniente fue la
+latencia del modelo de sentimiento en español (unos 1.5 segundos por noticia).
+Como punto de mejora se podría optimizar el modelo o cachear resultados. En
+general, el sistema cumplió con los requisitos funcionales y no funcionales
+definidos en el capítulo 5.
 
 == Pruebas de rendimiento
 
-Se realizaron pruebas de carga sobre el endpoint `/api/dashboard/AAPL` (el más
-pesado, ya que incluye llamadas a Yahoo Finance, Prophet y NewsAPI). Se utilizó
-Apache Benchmark con 100 peticiones totales y concurrencia de 10 hilos:
+En cuanto a las pruebas de rendimiento, se midió el tiempo de respuesta de los
+endpoints más pesados, como `/api/dashboard/<simbolo>` y
+`/api/prediccion/<simbolo>`. Se realizaron varias peticiones consecutivas y se
+registraron los tiempos de respuesta. Los resultados mostraron que la mayoría de
+las peticiones se completaban en menos de 2 segundos, cumpliendo con el
+requisito *RNF-02* de tiempo de respuesta aceptable. Sin embargo, se observó que
+el modelo de sentimiento en español era más lento (1.5 segundos por noticia) que
+el modelo en inglés (0.5 segundos), lo que se documentó como una limitación y un
+área de mejora futura. También hice pruebas de carga informales con Apache
+Benchmark (ab). Probé el endpoint `/api/dashboard/AAPL` (el más pesado, porque
+tiene que consultar varias fuentes y ejecutar Prophet) con 100 peticiones
+totales y 10 concurrentes:
 
 ```bash
 ab -n 100 -c 10 http://localhost:5000/api/dashboard/AAPL
 ```
 
-Los resultados fueron:
-
-- Tiempo medio por petición: 1.2 segundos.
-
-- Tasa de error: 0% (todas las peticiones respondieron con 200 OK).
-
-- Peticiones por segundo: ~8.3.
-
-Ninguna petición superó los 3 segundos, cumpliendo así el requisito *RNF-02*. El
-cuello de botella principal es la llamada a Prophet, que se ejecuta bajo demanda
-sin caché. En una versión futura se podría cachear el resultado durante unas
-horas.
+Los resultados fueron: tiempo medio por petición 1.2 segundos, tasa de error 0%,
+unas 8.3 peticiones por segundo. Ninguna petición superó los 3 segundos, así que
+cumplí el requisito *RNF-02*. El cuello de botella es Prophet, que se ejecuta
+bajo demanda sin caché. En una versión futura se podría cachear las predicciones
+durante unas horas, pero para las pruebas no hizo falta.
 
 == Pruebas de usabilidad
 
-Se pidió a tres voluntarios (dos estudiantes y un profesional del sector
-financiero) que utilizaran la aplicación durante 30 minutos y respondieran un
-cuestionario SUS (System Usability Scale). La puntuación media fue de *82 sobre
-100*, lo que se considera "excelente". Los aspectos mejor valorados fueron:
+En cuanto a las pruebas de usabilidad, se buscó obtener feedback de usuarios
+reales. Se diseñó un cuestionario con 10 preguntas cerradas (escala Likert de 1
+a 5) y dos preguntas abiertas. Se reclutaron cuatro voluntarios con distintos
+perfiles (estudiantes de ingeniería, estudiante de administración y profesional
+del sector tecnológico) para usar la aplicación durante unos 15 minutos y luego
+completar el cuestionario. El objetivo era evaluar la claridad de la interfaz,
+la facilidad de navegación, la comprensión de los gráficos y la utilidad de las
+funciones ofrecidas. Los resultados se analizaron cuantitativa y
+cualitativamente para identificar fortalezas y áreas de mejora.
 
-- Interfaz limpia y responsive (Tailwind CSS).
+=== Resultados cuantitativos
 
-- Tooltips explicativos en cada indicador técnico.
-
-- Facilidad para comprar/vender en la cartera virtual.
-
-- Internacionalización completa (español/inglés).
-
-Como sugerencias de mejora se mencionaron:
-
-- Añadir un modo oscuro.
-
-- Incluir más indicadores técnicos (ATR, Ichimoku).
-
-- Mejorar la velocidad del análisis de sentimiento en español.
-
-== Automatización con GitHub Actions
-
-Se configuró un workflow básico de integración continua (CI) en GitHub Actions
-para ejecutar las pruebas del backend automáticamente en cada push a la rama
-principal. El archivo .github/workflows/backend-tests.yml contiene:
+La siguiente Tabla 7.2 muestra las puntuaciones de cada pregunta, la media y la
+desviación estándar. Estos indicadores se han calculado con una hoja de cálculo
+a partir de las respuestas de los cuatro voluntarios.
 
 #figure(
-  ```yaml
-  name: Backend Tests
-  on: [push]
-  jobs:
-    test:
-      runs-on: ubuntu-latest
-      services:
-        postgres:
-          image: postgres:15
-          env:
-            POSTGRES_PASSWORD: postgres
-          options: >-
-            --health-cmd pg_isready
-            --health-interval 10s
-      steps:
-        - uses: actions/checkout@v4
-        - name: Install dependencies
-          run: pip install -r requirements.txt
-        - name: Run tests
-          run: pytest
-  ```,
-  caption: [Workflow de GitHub Actions para pruebas del backend.],
-) <code:github_actions>
+  table(
+    columns: (1.8fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
+    stroke: 1pt,
+    align: center + horizon,
+    inset: 4pt,
+    [Pregunta], [U1], [U2], [U3], [U4], [Media], [σ],
+    [1. Interfaz clara y fácil de navegar], [5], [4], [5], [4], [4.50], [0.50],
+    [2. Registro/login sencillo], [4], [5], [5], [4], [4.50], [0.50],
+    [3. Búsqueda rápida y cómoda], [5], [4], [5], [4], [4.50], [0.50],
+    [4. Gráficos comprensibles], [4], [3], [5], [4], [4.00], [0.71],
+    [5. Indicadores técnicos bien explicados],
+    [5],
+    [3],
+    [5],
+    [4],
+    [4.25],
+    [0.83],
 
-Este workflow asegura que los cambios no rompan las funcionalidades existentes
-antes de ser fusionados.
+    [6. Cartera virtual funciona bien], [5], [4], [5], [4], [4.50], [0.50],
+    [7. Noticias con sentimiento útiles], [5], [4], [5], [4], [4.50], [0.50],
+    [8. Rapidez de respuesta], [5], [5], [5], [4], [4.75], [0.43],
+    [9. Tooltips y ayuda claros], [5], [5], [5], [4], [4.75], [0.43],
+    [10. Recomendaría la aplicación], [4], [3], [5], [4], [4.00], [0.71],
+  ),
+  caption: [Resultados del cuestionario de usabilidad (escala 1-5).],
+) <tabla:usabilidad>
+
+La media global fue de 4.43 sobre 5, una valoración muy positiva. Lo mejor
+valorado fueron la rapidez de respuesta (4.75) y la claridad de los tooltips y
+la ayuda (4.75). Las preguntas con puntuación más baja (aunque todavía
+positivas) fueron la comprensión de los gráficos (4.00) y si recomendarían la
+aplicación (4.00). Probablemente porque algunos usuarios no están acostumbrados
+a leer gráficos de velas.
+
+=== Resultados cualitativos
+
+A continuación, se muestran los comentarios que dejaron los usuarios en las
+preguntas abiertas, tal cual los escribieron.
+
+¿Qué es lo que más te ha gustado de la aplicación?
+
+- Usuario 1: "La interfaz gráfica de usuario es sin duda lo mejor que tiene la
+  aplicación. Se nota que se ha dedicado bastante tiempo y trabajo a esa parte."
+
+- Usuario 2: "Lo que más me ha gustado es la conexión entre el backend y el
+  frontend."
+
+- Usuario 3: "Las páginas de ayuda de cada sección así como todos los popups los
+  cuales ayudan a comprender el funcionamiento y uso de la aplicación."
+
+- Usuario 4: "La rápida respuesta a las peticiones de usuario (búsqueda de
+  activos, noticias, movimientos en la cartera)."
+
+¿Qué sugerencias de mejora harías?
+
+- Usuario 1: "Mejorar la forma de mostrar los datos históricos y las
+  predicciones."
+
+- Usuario 2: "Mejoraría la interfaz gráfica de usuario a algo más profesional
+  hoy en día. Añadiendo un tema oscuro completo para usar la aplicación con poca
+  luz y un tema claro para el día."
+
+- Usuario 3: "Un canal de soporte técnico al administrador."
+
+- Usuario 4: "No tengo sugerencias, todo me ha parecido correcto."
+
+=== Análisis de los resultados
+
+Los usuarios destacaron especialmente la interfaz (U1), la integración
+backend-frontend (U2), las páginas de ayuda (U3) y la rapidez (U4). Las
+sugerencias apuntan a mejorar la visualización de datos históricos, dar un
+aspecto más profesional a la interfaz y añadir un canal de soporte. Se tendrá en
+cuenta como puntos a mejorar para versiones futuras.
+
+En general, los resultados de usabilidad son muy positivos. La media de 4.43 y
+los comentarios favorables confirman que la aplicación cumple con los objetivos
+de experiencia de usuario.
 
 == Limitaciones y aspectos no probados
 
-Debido a las limitaciones de tiempo, no se realizaron:
+En general, las pruebas realizadas cubrieron los casos de uso críticos y
+permitieron validar la funcionalidad, integración, rendimiento y usabilidad del
+sistema. Aunque, a continuación, se destacan algunas pruebas que no se pudieron
+realizar, y que podrían considerarse para futuras versiones del proyecto:
 
-- Pruebas de seguridad exhaustivas (inyección SQL, XSS, CSRF). No obstante, se
-utiliza SQLAlchemy que parametriza las consultas, mitigando la inyección SQL.
+- Pruebas de seguridad exhaustivas (inyección SQL, XSS, CSRF). Eso sí,
+  SQLAlchemy ya parametriza las consultas, lo que mitiga la inyección SQL de
+  forma automática.
+
 - Pruebas de rendimiento con alta concurrencia (más de 100 usuarios
-  simultáneos).
-- Pruebas automáticas completas del frontend (solo se probaron el pipe y la
-directiva de tooltip).
-- Pruebas de usabilidad con una muestra mayor de usuarios (solo 3 voluntarios).
+  simultáneos). Habría sido exagerado para el alcance del proyecto.
 
-A pesar de ello, los resultados obtenidos demuestran que el software es estable,
-funcional y cumple con los requisitos fundamentales del proyecto.
+- Pruebas automáticas completas del frontend (solo se probó manualmente el pipe
+  y la directiva). Automatizarlo llevaría demasiado tiempo.
+
+- Pruebas de usabilidad con una muestra mayor (solo cuatro voluntarios). Se
+  podría ampliar la muestra en futuras versiones.
+
+Aun así, los resultados demuestran que el software es estable, funcional y
+cumple los requisitos fundamentales.
 
 == Conclusión de la evaluación
 
-_FinancialPulse_ ha superado las pruebas críticas de funcionalidad, integración,
-aceptación, rendimiento y usabilidad. Los errores detectados (concurrencia en
-compras, validación de email duplicado, latencia del modelo en español) han sido
-corregidos o están documentados como mejora futura. El sistema es usable, cumple
-con los requisitos RGPD, ofrece una interfaz responsive y multilingüe, y
-presenta un rendimiento aceptable en condiciones normales. Las limitaciones
-conocidas se abordarán en trabajos futuros.
+FinancialPulse superó las pruebas críticas de funcionalidad, integración,
+aceptación, rendimiento y usabilidad. Los errores que aparecieron (concurrencia
+en compras, validación de email duplicado, lentitud del modelo en español) están
+corregidos o al menos documentados como mejoras futuras. El sistema es usable,
+respeta el RGPD, tiene una interfaz responsive y multilingüe, y ofrece un
+rendimiento aceptable en condiciones normales.
 
-En el siguiente capítulo se presentan las conclusiones finales del proyecto y
-las líneas de trabajo futuro.
+En el siguiente capítulo se presentan las conclusiones finales y las líneas de
+trabajo futuro.

@@ -1,19 +1,87 @@
+#import "../landscape_helpers.typ": landscape_page
+
 = Conclusiones y trabajo futuro
 
-En este último capítulo se resumen los logros del proyecto, se analiza el
-cumplimiento de los objetivos, se extraen lecciones aprendidas y se proponen
-líneas de mejora para versiones futuras de _FinancialPulse_.
+En este capítulo final, se presentan las conclusiones del proyecto, se comparan
+los objetivos iniciales con los resultados obtenidos, se analizan las lecciones
+aprendidas y se proponen posibles mejoras y líneas de trabajo futuro. Además, se
+reflexiona sobre la experiencia personal del autor durante el desarrollo del
+Trabajo Fin de Grado y se destacan los aspectos más relevantes del proceso de
+aprendizaje.
+
+== Temporización real
+
+La planificación inicial dividía el trabajo en 5 sprints de 4 semanas cada uno,
+empezando en febrero de 2026 y acabando en junio de 2026. En la siguiente Tabla
+8.1 se comparan las duraciones estimadas con las reales, y se comentan las
+desviaciones.
+
+#figure(
+  table(
+    columns: (1.5fr, 1.2fr, 1.2fr, 2.5fr),
+    stroke: 1pt,
+    align: center + horizon,
+    inset: 4pt,
+    [*Sprint*], [*Planificado*], [*Real*], [*Desviación / Observaciones*],
+    [Sprint 1 (Configuración y autenticación)],
+    [4 semanas],
+    [4 semanas],
+    [Sin desviación. Se completó la base de datos y el registro/login.],
+
+    [Sprint 2 (Yahoo Finance y gráficos)],
+    [4 semanas],
+    [4 semanas],
+    [Sin desviación. Integración correcta de datos en tiempo real.],
+
+    [Sprint 3 (Predicción y sentimiento)],
+    [4 semanas],
+    [5 semanas],
+    [Retraso de 1 semana por la dificultad de integrar Prophet y el modelo de
+      sentimiento en español, que requirió ajustes de umbral y caché.],
+
+    [Sprint 4 (Cartera virtual y backtest)],
+    [4 semanas],
+    [4 semanas],
+    [Sin desviación. Se implementaron compra/venta y cálculo de posición.],
+
+    [Sprint 5 (i18n, RGPD, pruebas, documentación)],
+    [4 semanas],
+    [4 semanas],
+    [Sin desviación. Se completaron la internacionalización, tooltips, páginas
+      de ayuda y las pruebas.],
+  ),
+  caption: [Comparación entre la planificación temporal inicial y la duración
+    real de los sprints.],
+) <tabla:temporizacion>
+
+A continuación en la Figura 8.1 se muestra un diagrama de Gantt con la
+temporización real de los sprints y las tareas principales. Se observa que, a
+pesar del retraso en el Sprint 3, el proyecto se completó dentro del plazo
+previsto.
+
+#landscape_page[
+  #figure(
+    image("../Figures/Template/Chapter9/ganttfinal.png", width: 100%),
+    caption: [Diagrama de Gantt final (temporización real).],
+  ) <fig:gantt_final>
+]
+
+Como se puede apreciar comparando el diagrama de Gantt inicial con el final, la
+planificación fue bastante acertada y permitió organizar el trabajo de manera
+eficiente. La única desviación significativa se produjo en el Sprint 3, donde la
+integración de Prophet y el modelo de sentimiento en español requirió más tiempo
+del previsto. Ajustar el umbral de negatividad y añadir una caché para las
+noticias supuso un retraso de una semana. A pesar de ello, todos los objetivos
+se completaron antes de junio de 2026, recuperando el tiempo perdido en sprints
+posteriores.
 
 == Cumplimiento de objetivos
 
-El objetivo principal de este Trabajo Fin de Grado era diseñar e implementar una
-plataforma web integral para el análisis financiero bursátil que permitiera a
-los usuarios consultar datos en tiempo real, obtener recomendaciones basadas en
-indicadores técnicos y análisis de sentimiento, y simular inversiones mediante
-una cartera virtual sin riesgo.
-
-A continuación se desglosa el estado de los objetivos específicos definidos en
-el capítulo 1:
+El objetivo principal del proyecto era diseñar e implementar una plataforma web
+que permitiera analizar activos financieros en tiempo real, obtener
+recomendaciones basadas en indicadores y sentimiento, y simular inversiones sin
+arriesgar dinero. La siguiente Tabla 8.2 resume el estado de cada objetivo
+específico.
 
 #figure(
   table(
@@ -64,69 +132,80 @@ el capítulo 1:
   caption: [Estado de cumplimiento de los objetivos específicos.],
 ) <tabla:objetivos>
 
-Por tanto, se puede concluir que #strong[todos los objetivos planificados se han
-  alcanzado satisfactoriamente].
+Como se observa en la Tabla 8.2, todos los objetivos específicos se han cumplido
+satisfactoriamente.
 
 == Lecciones aprendidas
 
-A lo largo del desarrollo del proyecto se han adquirido importantes
-conocimientos tanto técnicos como de gestión:
+En cuanto a la parte técnica, he aprendido a integrar múltiples tecnologías
+(Angular, Flask, PostgreSQL, Prophet, Transformers) en un solo proyecto, a
+manejar sesiones y cookies de forma segura, a optimizar consultas a la base de
+datos y a implementar un sistema de backtesting. También he mejorado mis
+habilidades en el diseño de interfaces y experiencia de usuario, así como en la
+internacionalización y accesibilidad de aplicaciones web.
 
-- *Técnicos*: Uso avanzado de Angular (standalone components, pipes
-  personalizados, directivas), integración con Flask, manejo de sesiones,
-  consumo de APIs externas (yfinance, NewsAPI), implementación de modelos de
-  machine learning (Prophet, Transformers) y despliegue con Docker.
-- *Metodológicos*: Aplicación de Scrum adaptado a un solo desarrollador resultó
-  eficaz para mantener el ritmo y priorizar tareas. La planificación con
-  diagramas de Gantt ayudó a visualizar el progreso.
-- *Dificultades encontradas*: La integración del modelo de sentimiento en
-  español (bardsai/finance-sentiment-es-base) fue más lenta de lo esperado
-  debido al tamaño del modelo y a la falta de aceleración GPU en el entorno de
-  desarrollo. Se resolvió cacheando los resultados. También se detectó un
-  problema de concurrencia en las compras rápidas, solucionado con bloqueo
-  pesimista en la base de datos.
-- *Importancia de la documentación*: Escribir la memoria en paralelo al
-  desarrollo ha facilitado recordar decisiones y justificarlas adecuadamente.
+- *Técnicos*: Angular (componentes standalone, pipes, directivas), Flask, manejo
+  de sesiones, APIs externas (yfinance, NewsAPI), modelos de machine learning
+  (Prophet, Transformers) y despliegue con Docker. También profundicé en el
+  cálculo de indicadores con Pandas y en cómo normalizar una base de datos
+  correctamente. Cosas que había visto en clase pero no había llevado a la
+  práctica tan a fondo.
+
+- *Metodológicos*: Me funcionó bien adaptar Scrum a un solo desarrollador. El
+  diagrama de Gantt me ayudó a visualizar el progreso y a detectar retrasos a
+  tiempo. Las reuniones diarias, aunque fueran breves y un poco artificiales, me
+  mantuvieron centrado en lo que tocaba hacer cada día.
+
+- *Dificultades encontradas*: El modelo de sentimiento en español fue más lento
+  de lo que pensaba y dio algunos falsos negativos al principio. Lo solucioné
+  cacheando resultados y ajustando el umbral al 20%. También tuve un problema de
+  concurrencia en las compras rápidas (dos peticiones a la vez modificaban la
+  misma cartera). Se solucionó con un bloqueo pesimista (`with_for_update()`) en
+  la transacción.
+
+- *Importancia de la documentación*: Escribir la memoria a la vez que
+  desarrollaba me ayudó a recordar por qué tomé ciertas decisiones. Además,
+  Typst me permitió llevar un control de versiones limpio de los capítulos, algo
+  que se agradece sobre todo a la hora de revisar la memoria completa.
 
 == Trabajo futuro
 
-A pesar de que la aplicación es funcional y cumple los objetivos, existen
-numerosas líneas de mejora y ampliación:
+La aplicación funciona correctamente, pero existe margen de mejora. Algunas de
+las posibles mejoras se han ido apuntando durante el desarrollo, otras han
+surgido de los comentarios de los usuarios.
 
-- #strong[Mejora del modelo de predicción]: Integrar modelos más avanzados
-  (LSTM, Transformer) o permitir al usuario seleccionar el horizonte de
-  predicción.
-- #strong[Ampliación del análisis de sentimiento]: Incluir análisis de
-  sentimiento de redes sociales (Twitter, Reddit) y agregar fuentes de noticias
-  adicionales (p.ej., RSS de bancos centrales).
-- #strong[Más indicadores técnicos]: Añadir indicadores como ATR, Ichimoku,
-  Fibonacci, etc., y permitir la personalización de parámetros.
-- #strong[Modo oscuro]: Implementar un tema oscuro completo para mejorar la
-  experiencia de usuario en condiciones de poca luz.
-- #strong[Notificaciones push]: Configurar notificaciones en tiempo real cuando
-  un activo favorito supere un umbral de precio o cuando haya noticias
-  relevantes.
-- #strong[Aplicación móvil]: Desarrollar una versión nativa para Android/iOS
-  usando Ionic o Flutter, reutilizando el backend existente.
-- #strong[Pruebas automáticas completas]: Ampliar la cobertura de pruebas
-  unitarias (frontend y backend) e implementar pruebas end-to-end con Cypress o
-  Playwright.
-- #strong[Seguridad]: Añadir protección CSRF, rate limiting y un cortafuegos de
-  aplicaciones web (WAF) si se despliega en producción.
-- *Mejora del rendimiento*: Cachear respuestas de yfinance y Prophet para
-  reducir tiempos de carga.
-- *Foro de usuarios*: Incorporar un sistema de comentarios o foro para que los
-  inversores compartan estrategias y dudas.
+- *Mejorar la predicción*: probar modelos más avanzados (LSTM, Transformer) o
+  dejar que el usuario elija el horizonte de predicción.
+- *Ampliar el análisis de sentimiento*: incluir redes sociales (Twitter, Reddit)
+  y añadir más fuentes de noticias (por ejemplo, RSS de bancos centrales).
+- *Más indicadores técnicos*: ATR, Ichimoku, Fibonacci... y permitir que el
+  usuario ajuste los parámetros.
+- *Modo oscuro*: implementar un tema oscuro completo para usar la aplicación con
+  poca luz. Varios usuarios lo pidieron.
+- *Notificaciones push*: avisar en tiempo real cuando un favorito supere un
+  umbral o cuando haya noticias relevantes.
+- *Aplicación móvil*: desarrollar una versión nativa con Ionic o Flutter,
+  reutilizando el backend.
+- *Pruebas automáticas*: aumentar la cobertura de pruebas e implementar
+  end-to-end con Cypress o Playwright.
+- *Seguridad*: añadir protección CSRF, limitación de tasa (rate limiting) y un
+  WAF si se despliega en producción.
+- *Rendimiento*: cachear respuestas de yfinance y Prophet para reducir tiempos
+  de carga.
+- *Foro de usuarios*: un espacio donde los inversores puedan comentar
+  estrategias y resolver dudas.
+- *Canal de soporte técnico*: como sugirió uno de los usuarios en las pruebas de
+  usabilidad, habilitar una forma de contacto directo con el administrador.
 
 == Reflexión personal
 
-La realización de este Trabajo Fin de Grado ha sido una experiencia muy
-enriquecedora. Me ha permitido aplicar los conocimientos adquiridos durante el
-Doble Grado en Ingeniería Informática y Administración de Empresas a un proyecto
-real, combinando tecnologías web modernas, inteligencia artificial y finanzas.
-El resultado es una herramienta educativa y útil que puede ayudar a personas sin
-experiencia a iniciarse en el mundo de la inversión de forma segura y guiada.
+Hacer este Trabajo Fin de Grado ha sido una experiencia muy enriquecedora. Me ha
+permitido aplicar en un proyecto real lo que he estudiado durante el Doble Grado
+de Ingeniería Informática y Administración de Empresas, combinando desarrollo
+web, inteligencia artificial y finanzas. El resultado es una herramienta
+educativa que puede ayudar a gente sin experiencia a iniciarse en la inversión
+de una forma segura y guiada.
 
-Agradezco a mi tutor por su orientación y a mi familia por su apoyo
-incondicional. Espero que #emph[FinancialPulse] continúe evolucionando y sea de
-utilidad para la comunidad.
+Agradezco a mi tutor por su orientación y a mi familia por darme su apoyo
+durante estos meses. Espero que FinancialPulse siga creciendo y sea útil para
+quien lo necesite.

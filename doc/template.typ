@@ -34,6 +34,10 @@
 #let default-color = black
 #let reference-color = black
 
+// Márgenes simétricos para todas las páginas (centrado horizontal)
+#let lateral-margin = 3cm
+#let y-margin = 5cm
+
 // Project definition
 #let project(
   title: "",
@@ -65,8 +69,16 @@
   }
 
   // Define custom caption
-  show figure.where(kind: table): set figure.caption(position: top)
-  show figure.where(kind: image): set figure.caption(position: bottom)
+  show figure.where(kind: image): set figure(supplement: [Figura])
+  show figure.where(kind: table): set figure(supplement: [Tabla])
+  show figure.where(kind: table): set figure.caption(position: bottom)
+  show figure.where(kind: image): it => {
+    set figure.caption(position: bottom)
+    block(
+      below: 2em,
+      it,
+    )
+  }
   show figure.caption: it => context {
     set text(fill: default-color, weight: "bold")
     it.supplement + " "
@@ -122,10 +134,10 @@
   show heading: set block(below: 16pt) // Bottom margin
   show heading.where(level: 1): it => {
     set text(size: 24pt, weight: "regular")
-    pagebreak(to: "even", weak: true)
+    pagebreak()
     stack(
       spacing: 20pt,
-      if not regex("(Índice.*)|(Bibliografía)|(Agradecimientos)")
+      if not regex("(Índice.*)|(Bibliografía)|(Agradecimientos)|(Apéndices)")
         in it.body.fields().text {
         let title-content = text(size: 16pt, weight: "regular", "Capítulo ")
         let title-number = text(size: 64pt, weight: "light", str(
@@ -338,10 +350,7 @@
   let colon-entry(it) = {
     link(
       it.element.location(),
-      text(fill: black, it.indented(
-        [#it.prefix().children.at(2).],
-        it.inner(),
-      )),
+      text(fill: black, it.indented(it.prefix(), it.inner())),
     )
   }
   show outline: out => {
@@ -404,14 +413,19 @@
     pagebreak()
   }
 
-  pagebreak()
+  // pagebreak()
 
   // Hydra config
   let hydra-context = (
     book: true,
   )
   set page(
-    margin: (inside: inside-margin, outside: outside-margin, y: y-margin),
+    margin: (
+      left: lateral-margin,
+      right: lateral-margin,
+      top: y-margin,
+      bottom: y-margin,
+    ),
     // Hydra header definition
     header: context {
       if calc.odd(here().page()) {
@@ -478,7 +492,7 @@
       + " la defensa de dicho trabajo ante el tribunal que corresponda.",
   )
   par(
-    "Y para que conste, expiden y firman el presente informe en "
+    "Y para que conste, expido y firmo el presente informe en "
       + city
       + ", a "
       + traducir_mes(
@@ -508,12 +522,13 @@
     set page(margin: 4cm)
     heading(numbering: none, outlined: false, "Agradecimientos")
     par(acknowledgements)
-    pagebreak()
+    // pagebreak()
   }
   // -------------------------------------------------------------
 
 
   // Table of contents settings
+  show bibliography: set heading(numbering: "1.")
   show outline.entry.where(level: 1): it => {
     v(16pt, weak: true)
     strong(it)

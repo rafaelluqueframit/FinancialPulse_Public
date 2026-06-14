@@ -1,202 +1,224 @@
 = Estado del arte
 
-En este capítulo se analizan las principales plataformas y aplicaciones
-existentes en el ámbito del análisis financiero bursátil, tanto gratuitas como
-de pago, y se comparan sus funcionalidades con las que ofrece _FinancialPulse_.
-El objetivo es identificar las carencias de las soluciones actuales y justificar
-la necesidad de una herramienta como la desarrollada en este Trabajo Fin de
-Grado.
+Antes de ponerme a diseñar FinancialPulse, dediqué un tiempo a mirar qué otras
+herramientas similares existían ya en el mercado. Quería hacerme una idea de qué
+soluciones están disponibles, qué ofrecen exactamente y, sobre todo, en qué
+aspectos se quedan cortas. Este análisis previo me pareció importante porque
+ayuda a justificar la propuesta del proyecto y a detectar oportunidades de
+mejora reales.
+
+Lo que busco no es solo hacer una lista de competidores, sino entender por qué
+una plataforma nueva podría tener sentido incluso cuando ya hay varias muy
+consolidadas.
 
 == Aplicaciones similares
 
-A continuación se describen brevemente las plataformas más representativas del
-sector, destacando sus características principales, sus puntos fuertes y sus
-limitaciones.
+A continuación describo algunas de las plataformas más representativas que
+analicé durante este estudio. Me centré en las más conocidas y en las que más se
+acercan, aunque sea parcialmente, a lo que pretendía construir.
 
 === Yahoo Finance
 
-Yahoo Finance es uno de los portales financieros más antiguos y populares.
-Proporciona datos en tiempo real de acciones, índices, divisas y criptomonedas,
-así como noticias financieras, gráficos históricos básicos y algunos indicadores
-técnicos (medias móviles, RSI, etc.). Está disponible de forma gratuita, aunque
-cuenta con una versión de pago (Yahoo Finance Premium) que ofrece análisis más
-avanzados.
+Yahoo Finance es una de las plataformas más veteranas y conocidas en el mundo de
+las finanzas. Lleva muchísimos años ofreciendo datos en tiempo real de acciones,
+índices, divisas y criptomonedas. También incluye noticias, gráficos básicos y
+algunos indicadores técnicos como medias móviles o RSI. La versión gratuita es
+bastante completa, aunque existe una modalidad de pago (Premium) con algunas
+funcionalidades adicionales. En el siguiente enlace se puede acceder a su página
+web:
+https://es.finance.yahoo.com/
 
-#strong[Similitudes con FinancialPulse]: Ambas permiten consultar datos en
-tiempo real de una amplia variedad de activos y visualizar gráficos históricos.
-
-#strong[Carencias]: No ofrece un sistema de cartera virtual para simular
-inversiones, carece de análisis de sentimiento de noticias integrado, su
-predicción de precios es muy limitada (no utiliza modelos de machine learning) y
-no permite la gestión de favoritos ni la internacionalización completa.
+En términos generales, comparte con FinancialPulse la posibilidad de consultar
+datos de mercado en tiempo real y visualizar gráficos históricos. Sin embargo,
+presenta varias limitaciones importantes. Para empezar, no dispone de una
+cartera virtual para simular inversiones sin dinero real. Tampoco incluye
+análisis de sentimiento de noticias (sería interesante, pero no lo tiene).
+Además, sus capacidades de predicción son muy básicas, o prácticamente
+inexistentes si hablamos de modelos de machine learning. Y por si fuera poco, no
+ofrece una gestión de favoritos avanzada ni una internacionalización completa
+pensada en el usuario.
 
 === Investing.com
 
-Investing.com es otra de las referencias mundiales en información financiera.
-Destaca por su amplia cobertura de activos, sus gráficos interactivos avanzados
-(con decenas de indicadores técnicos) y su sección de noticias y calendario
-económico. Ofrece una versión gratuita con publicidad y una versión de pago
-(Pro) con herramientas adicionales.
+Investing.com es otra plataforma muy popular, utilizada por millones de
+personas. Destaca sobre todo por la enorme cantidad de activos que cubre, sus
+gráficos interactivos bastante completos y una sección de noticias y calendario
+económico muy extensa. Tiene una versión gratuita con publicidad y una versión
+Pro de pago con más funcionalidades. En el siguiente enlace se puede acceder a
+su página web:
+https://www.investing.com/
 
-#strong[Similitudes con FinancialPulse]: Proporciona datos en tiempo real, una
-amplia variedad de indicadores técnicos y noticias financieras.
-
-#strong[Carencias]: No incluye una cartera de simulación gratuita (la función de
-cartera es solo de seguimiento, no permite compras virtuales), no realiza
-análisis de sentimiento de las noticias, las predicciones son básicas (basadas
-en encuestas de analistas) y su interfaz es abrumadora para usuarios noveles.
+Se parece a FinancialPulse en que ofrece datos en tiempo real y muchos
+indicadores técnicos. Pero también tiene carencias importantes. Por ejemplo, no
+permite hacer una simulación completa de cartera (como comprar y vender con
+saldo ficticio de forma realista). Tampoco incorpora análisis de sentimiento
+sobre noticias, y sus predicciones se basan sobre todo en opiniones de
+analistas, no en modelos estadísticos ni de aprendizaje automático. Además, la
+cantidad de información que muestra puede llegar a ser abrumadora para alguien
+que está empezando. Es una herramienta potente, pero no demasiado amigable para
+novatos.
 
 === TradingView
 
-TradingView es una plataforma de gráficos y análisis técnico muy popular entre
-traders. Su punto fuerte es la personalización de gráficos y la gran comunidad
-que comparte estrategias y scripts (Pine Script). Ofrece una versión gratuita
-limitada y varios planes de pago.
+TradingView es una de las herramientas favoritas entre los traders más técnicos,
+sobre todo por la calidad de sus gráficos y por lo personalizables que son.
+Cuenta con una comunidad muy activa que comparte estrategias y scripts mediante
+Pine Script, su propio lenguaje de programación. El modelo de negocio es
+freemium: la versión gratuita es útil pero limitada, y hay varios planes de
+pago. En el siguiente enlace se puede acceder a su página web:
+https://www.tradingview.com/
 
-#strong[Similitudes con FinancialPulse]: Ofrece indicadores técnicos avanzados y
-permite realizar backtesting de estrategias (aunque con limitaciones en la
-versión gratuita).
-
-#strong[Carencias]: No dispone de una cartera de simulación completa (solo
-permite watchlists), carece de análisis de sentimiento de noticias, las
-predicciones automáticas no están integradas, su uso es complejo para no
-expertos y la versión gratuita está muy restringida.
+Coincide con FinancialPulse en la presencia de indicadores técnicos avanzados y
+en la posibilidad de hacer backtesting de estrategias (aunque con ciertas
+restricciones según el plan contratado). Sin embargo, no incluye una cartera
+virtual completa, ni análisis de sentimiento de noticias, ni predicciones
+automáticas basadas en machine learning. La curva de aprendizaje puede ser
+bastante elevada si no tienes experiencia previa, y la versión gratuita se queda
+muy justa para según qué cosas.
 
 === Bloomberg Terminal
 
-Bloomberg Terminal es el estándar de oro en el mundo financiero profesional.
-Proporciona datos en tiempo real, análisis fundamental y técnico, noticias,
-mensajería privada y un sinfín de herramientas. Su principal inconveniente es su
-elevadísimo coste (miles de euros al mes), que lo hace inaccesible para
-particulares o estudiantes.
+La Bloomberg Terminal es el estándar de oro en el sector financiero profesional.
+Es la herramienta que usan los grandes fondos de inversión, bancos de inversión
+y profesionales del sector. Ofrece datos en tiempo real, análisis fundamental y
+técnico, noticias, mensajería entre usuarios y un montón de herramientas
+avanzadas. El problema es su precio: es carísima, completamente fuera del
+alcance de un estudiante o de un inversor particular.
 
-#strong[Similitudes con FinancialPulse]: Ofrece análisis técnico y datos en
-tiempo real.
-
-#strong[Carencias]: Es extremadamente cara, no permite simulación con dinero
-virtual (está orientada a inversores reales), su interfaz es muy compleja y no
-está adaptada para aprendizaje, y no incluye análisis de sentimiento de noticias
-con IA.
+Aunque comparte con FinancialPulse el enfoque en análisis financiero y datos en
+tiempo real, está orientada a un entorno profesional muy exigente. No tiene un
+modo de simulación como tal (está pensada para operar con dinero real), su
+interfaz es compleja y no incorpora análisis de sentimiento basado en
+inteligencia artificial. Vamos, que es una nave espacial cuando lo que necesitas
+es un coche normal.
 
 === eToro
 
-eToro es una plataforma de trading social que permite invertir en acciones,
-criptomonedas y otros activos. Destaca por su funcionalidad de copia de
-operadores exitosos y por ofrecer una cuenta de demostración (virtual) con
-100.000 USD ficticios. Está regulada y permite invertir con dinero real, pero no
-ofrece análisis técnico avanzado ni predicciones.
-
-#strong[Similitudes con FinancialPulse]: Incluye una cartera virtual para
+eToro es una plataforma de trading social que se ha hecho muy popular. Permite
+invertir en acciones, criptomonedas y otros activos, pero su característica más
+diferencial es el copy trading: puedes copiar automáticamente las operaciones de
+otros inversores. También ofrece una cuenta demo con dinero virtual para
 practicar sin riesgo.
 
-#strong[Carencias]: No proporciona indicadores técnicos detallados, carece de
-análisis de sentimiento de noticias, no permite exportar datos personales (RGPD)
-y su interfaz está orientada principalmente al trading social, no al análisis.
+La similitud con FinancialPulse está sobre todo en la posibilidad de operar con
+dinero ficticio. Sin embargo, eToro no ofrece un análisis técnico profundo, no
+incorpora predicciones basadas en modelos estadísticos ni análisis de
+sentimiento de noticias. Además, no permite exportar todos tus datos personales
+de forma completa (al menos no de manera sencilla) y está más enfocada al
+trading social que al análisis educativo o técnico.
 
 === Robinhood
 
-Robinhood es una aplicación de inversión sin comisiones muy popular en Estados
-Unidos. Permite comprar y vender acciones, ETFs y criptomonedas con una interfaz
-muy sencilla y atractiva. Sin embargo, su disponibilidad geográfica es limitada
-(principalmente EE. UU.) y carece de herramientas de análisis técnico avanzado.
+Robinhood es una aplicación de inversión muy famosa en Estados Unidos, sobre
+todo por su simplicidad y por la ausencia de comisiones. Permite comprar y
+vender acciones, ETFs y criptomonedas con una interfaz bastante intuitiva. El
+problema es que apenas está disponible fuera de EE. UU. y sus herramientas de
+análisis técnico son muy limitadas.
 
-#strong[Similitudes con FinancialPulse]: Interfaz limpia y sencilla, operativa
-fácil.
-
-#strong[Carencias]: No ofrece simulación virtual con dinero ficticio (solo
-dinero real), no tiene análisis técnico, ni predicciones, ni análisis de
-sentimiento. Además, no cumple con el RGPD al no permitir la exportación de
-datos.
+En comparación con FinancialPulse, comparte la idea de una interfaz sencilla y
+accesible. Pero no incluye simulación con dinero ficticio, ni análisis de
+sentimiento, ni predicciones, ni herramientas avanzadas de análisis técnico.
+Tampoco contempla funcionalidades relacionadas con la exportación de datos
+personales o el cumplimiento del RGPD. Es una app muy simple para empezar, pero
+se queda corta si quieres algo más que comprar y vender.
 
 == Resumen comparativo
 
-A continuación se resumen las principales funcionalidades de las plataformas
-analizadas, destacando las carencias que #emph[FinancialPulse] cubre.
+Para sintetizar las diferencias entre las plataformas analizadas, la Tabla 3.1
+presenta una comparación visual de las funcionalidades más relevantes. Así se
+puede identificar rápidamente qué cubre cada alternativa y en qué destaca
+FinancialPulse.
 
-#grid(
-  columns: 2,
-  gutter: 1cm,
-  [#strong[Funcionalidad / Plataforma]], [#strong[*FinancialPulse*]],
-  [#strong[Datos en tiempo real]], [Sí],
-  [#strong[Indicadores técnicos avanzados]],
-  [RSI, MACD, SMA, Bollinger, estocástico, backtesting],
+#figure(
+  table(
+    columns: (2.8cm, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
+    inset: 6pt,
+    align: (left, center, center, center, center, center, center, center),
+    [#strong[Plataforma]],
+    [#strong[Tiempo real]],
+    [#strong[Análisis técnico]],
+    [#strong[Predicción]],
+    [#strong[Sentimiento]],
+    [#strong[Cartera virtual]],
+    [#strong[I18n]],
+    [#strong[RGPD]],
 
-  [#strong[Predicción de precios]],
-  [Prophet (30 días con intervalos de confianza)],
+    [Yahoo Finance], [✓], [△], [✗], [✗], [✗], [△], [✗],
+    [Investing.com], [✓], [✓], [✗], [✗], [✗], [△], [✗],
+    [TradingView], [✓], [✓], [✗], [✗], [✗], [△], [✗],
+    [Bloomberg Terminal], [✓], [✓], [✗], [✗], [✗], [△], [△],
+    [eToro], [✓], [△], [✗], [✗], [✓], [△], [△],
+    [Robinhood], [✓], [✗], [✗], [✗], [✗], [✗], [✗],
+    [*FinancialPulse*], [✓], [✓], [✓], [✓], [✓], [✓], [✓],
+  ),
+  caption: "Comparativa de funcionalidades entre plataformas similares",
+)<tabla:comparativa>
 
-  [#strong[Análisis de sentimiento de noticias]],
-  [FinBERT (inglés) + modelo español específico],
 
-  [#strong[Cartera virtual]],
-  [10.000 USD simulados, compra/venta, historial, gráficos],
+#text(size: 8pt)[Leyenda: ✓ = sí, △ = parcial o limitado, ✗ = no.]
 
-  [#strong[Internacionalización completa]],
-  [Español e inglés con tooltips traducidos],
-
-  [#strong[Cumplimiento RGPD]],
-  [Exportación de datos (JSON) y eliminación de cuenta],
-
-  [#strong[Código abierto y gratuito]], [Sí, licencia MIT],
-)
-
-En cambio, las plataformas existentes presentan las siguientes limitaciones:
-
-- #strong[Yahoo Finance, Investing.com, TradingView]: No tienen cartera virtual,
-  análisis de sentimiento ni predicción automática.
-- #strong[Bloomberg Terminal]: Es de pago y extremadamente cara, interfaz
-  profesional muy compleja.
-- #strong[eToro]: Ofrece demo pero sin indicadores técnicos avanzados ni
-  sentimiento.
-- #strong[Robinhood]: Solo disponible en EE. UU., sin herramientas de análisis.
-
-Como se observa, #emph[FinancialPulse] es la única plataforma gratuita que
-integra todas estas funcionalidades avanzadas en un solo lugar, con especial
-énfasis en la educación financiera y la simulación sin riesgo.
+La lectura de la tabla deja ver que varias plataformas cubren una parte de las
+necesidades, pero ninguna reúne todo en una sola propuesta. FinancialPulse se
+diferencia precisamente por integrar en un mismo entorno datos en tiempo real,
+análisis técnico, predicción, sentimiento, cartera virtual, internacionalización
+y cumplimiento del RGPD.
 
 == Conclusiones del estado del arte
 
-Del análisis realizado se extraen las siguientes conclusiones:
+Del análisis realizado se pueden extraer varias conclusiones importantes:
 
-+ #strong[Falta de integración]: Ninguna de las plataformas gratuitas analizadas
-  integra en un solo lugar todas las funcionalidades que ofrece
-  #emph[FinancialPulse].
+1. *Falta de integración*: no existe una plataforma gratuita que combine en un
+  mismo entorno datos en tiempo real, análisis técnico avanzado, predicción de
+  precios, análisis de sentimiento, cartera virtual, internacionalización y
+  cumplimiento del RGPD.
 
-+ #strong[Barrera económica]: Las herramientas más completas son de pago y
-  resultan inaccesibles para estudiantes o pequeños inversores.
+2. *Barreras económicas*: las soluciones más completas, como Bloomberg Terminal,
+  están orientadas exclusivamente a profesionales y resultan inalcanzables para
+  estudiantes o usuarios particulares. El dinero no debería ser un obstáculo
+  para aprender.
 
-+ #strong[Complejidad de uso]: Plataformas como TradingView o Investing.com
-  ofrecen una gran cantidad de datos, pero su interfaz resulta abrumadora para
-  usuarios sin experiencia.
+3. *Complejidad de uso*: plataformas como TradingView o Investing.com ofrecen
+  muchas funcionalidades, pero su densidad de información puede desorientar a
+  usuarios principiantes. A veces menos es más.
 
-+ #strong[Falta de simulaciones sin riesgo]: La mayoría no incluye cartera
-  virtual. Solo eToro lo hace, pero carece de análisis técnico y predicción.
+4. *Ausencia de simulación completa*: aunque hay opciones con cuentas demo,
+  pocas ofrecen una cartera virtual integrada con funcionalidades de análisis
+  avanzado. La mayoría se quedan en un seguimiento básico.
 
-+ #strong[Análisis de sentimiento ausente]: Ninguna de las plataformas
-  analizadas incorpora análisis de sentimiento de noticias basado en modelos de
-  lenguaje. Esta funcionalidad es novedosa y útil.
+5. *Falta de análisis de sentimiento*: ninguna de las plataformas estudiadas
+  incorpora análisis automático de noticias mediante modelos de lenguaje o
+  inteligencia artificial. Es una funcionalidad que me parecía interesante y que
+  nadie ofrecía de forma integrada.
 
-+ #strong[Incumplimiento del RGPD]: Muchas aplicaciones no permiten exportar
-  datos personales ni eliminar la cuenta de forma completa.
+6. *Limitaciones en privacidad y RGPD*: pocas herramientas permiten exportar o
+  eliminar completamente los datos personales del usuario de forma sencilla. Eso
+  es un problema si te tomas en serio la privacidad.
 
-+ #strong[Internacionalización limitada]: Aunque algunas plataformas están
-  disponibles en varios idiomas, ninguna ofrece una traducción completa y
-  dinámica con tooltips explicativos.
+7. *Internacionalización incompleta*: aunque algunas plataformas soportan varios
+  idiomas, pocas ofrecen una experiencia completamente adaptada con traducciones
+  dinámicas y elementos explicativos contextualizados. Los tooltips traducidos,
+  por ejemplo, son algo que apenas se ve.
 
 == Aportación de FinancialPulse
 
-A la vista de las carencias identificadas, #emph[FinancialPulse] se posiciona
-como una alternativa:
+A partir de todas estas carencias, FinancialPulse se plantea como una
+alternativa que intenta integrar varias funcionalidades en una única plataforma,
+sin renunciar a la facilidad de uso:
 
-- #strong[Gratuita y de código abierto]: Todo el código fuente está disponible
-  en GitHub bajo licencia MIT.
-- #strong[Educativa y accesible]: Interfaz intuitiva, con ayuda integrada
-  (tooltips, páginas de ayuda).
-- #strong[Integral]: Reúne datos en tiempo real, indicadores técnicos,
-  predicción de precios, análisis de sentimiento, cartera virtual, favoritos,
-  noticias personalizables, internacionalización completa y cumplimiento RGPD.
-- #strong[Desplegable fácilmente]: Mediante contenedores Docker.
-- #strong[Con tecnologías de vanguardia]: Prophet, FinBERT y modelo en español
-  para análisis de sentimiento.
+- *Gratuita y de código abierto*: disponible públicamente con licencia MIT, para
+  que cualquiera pueda usarla, estudiarla o modificarla.
+- *Enfoque educativo y accesible*: interfaz sencilla, acompañada de tooltips y
+  páginas de ayuda que explican los conceptos básicos.
+- *Plataforma integral*: combina datos en tiempo real, indicadores técnicos,
+  predicción con Prophet, análisis de sentimiento, cartera virtual, favoritos,
+  noticias, internacionalización completa y cumplimiento del RGPD.
+- *Despliegue sencillo*: mediante contenedores Docker, para que cualquier
+  persona con conocimientos básicos pueda montar la aplicación en su propio
+  equipo sin complicaciones.
+- *Uso de tecnologías actuales*: modelos como Prophet, FinBERT y un modelo de
+  sentimiento específico para español.
 
-En los siguientes capítulos se detalla la planificación, el diseño, la
-implementación y la validación de esta solución.
+En los siguientes capítulos detallo cómo se llevó a cabo la planificación, el
+diseño, la implementación y la validación de todo el sistema. El análisis del
+estado del arte me sirvió para saber qué camino seguir y, sobre todo, para no
+reinventar la rueda donde no hacía falta.

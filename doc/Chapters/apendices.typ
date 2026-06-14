@@ -2,153 +2,255 @@
 
 == A. Manual de usuario
 
-Este manual describe las principales funcionalidades de #emph[FinancialPulse] desde la perspectiva del usuario final. Se asume que el usuario tiene conocimientos básicos de navegación web.
+Este manual explica las principales funcionalidades de FinancialPulse pensando
+en un usuario final que sabe navegar por la web pero no tiene por qué conocer
+finanzas a fondo.
 
 === A.1. Requisitos previos
 
-- Navegador web actualizado (Chrome, Firefox, Edge).
-- Conexión a Internet para obtener datos en tiempo real.
-- (Opcional) Si se despliega localmente, Docker y Docker Compose.
+- Un navegador actual (Chrome, Firefox, Edge, Safari).
+- Conexión a Internet (para los datos en tiempo real y las noticias).
+- Si quieres desplegarlo en local: Docker y Docker Compose.
 
 === A.2. Registro e inicio de sesión
 
-1. Acceder a la página principal.
-2. Hacer clic en "Registrarse" y completar el formulario (nombre, email, contraseña).
-3. Una vez registrado, iniciar sesión con las credenciales.
-4. Tras el inicio de sesión, se crea automáticamente una cartera virtual con 10.000 USD de saldo inicial.
+1. Ve a la página principal.
+2. Haz clic en *Registrarse* y rellena el formulario (nombre, email, contraseña;
+  mínimo 6 caracteres).
+3. Una vez registrado, inicia sesión con tus credenciales.
+4. El sistema te crea automáticamente una cartera virtual con 10.000 USD de
+  saldo inicial.
 
-> [FIGURA: Pantalla de inicio de sesión. La imagen debe mostrar el formulario con campos de email y contraseña, y el botón "Iniciar sesión".] <fig:manual_login>
+#figure(
+  image("../Figures/Template/Apendices/mockup_login.png", width: 100%),
+  caption: [Pantalla de inicio de sesión.],
+) <fig:ap_login>
 
-> [FIGURA: Pantalla de registro. Debe verse el formulario con nombre, email, contraseña y botón "Registrarse".] <fig:manual_registro>
+#figure(
+  image("../Figures/Template/Apendices/mockup_register.png", width: 100%),
+  caption: [Pantalla de registro de nuevo usuario.],
+) <fig:ap_register>
 
 === A.3. Página principal (Home)
 
-- Muestra un resumen de índices (S&P 500, IBEX 35, etc.) y su variación diaria.
-- Sección de noticias financieras destacadas (sin análisis de sentimiento, solo titulares).
-- Si el usuario ha iniciado sesión, aparece el resumen de la cartera (saldo, beneficio, última transacción) y un acceso directo a la cartera virtual.
+Una vez dentro, la página de inicio te muestra:
 
-> [FIGURA: Página principal con resumen de índices y noticias.] <fig:manual_home>
+- Barra de navegación arriba, con enlaces a las secciones y selector de idioma.
+- Un resumen de índices (S&P 500, IBEX 35, Dow Jones, Nasdaq) con su precio y
+  variación.
+- Las últimas noticias destacadas.
+- Un resumen rápido de tu cartera (saldo, beneficio) y un enlace a la página de
+  cartera.
+- La lista de tus últimas transacciones.
+
+#figure(
+  image("../Figures/Template/Apendices/mockup_home.png", width: 100%),
+  caption: [Página principal (Home) con resumen de índices y noticias.],
+) <fig:ap_home>
 
 === A.4. Búsqueda y análisis de activos
 
-- En el buscador central, escribir el nombre o símbolo de un activo (ej. "Apple", "AAPL", "Bitcoin", "EUR/USD").
-- Se mostrarán sugerencias automáticas; seleccionar una para acceder al dashboard.
-- El dashboard incluye:
-  - Gráfico histórico (velas o líneas) con selector de período (1 semana, 1 mes, 3 meses, 1 año, 5 años, máximo).
-  - Pestañas para indicadores técnicos (RSI, MACD, SMA, Bollinger, estocástico) con sus respectivos gráficos.
-  - Botón "Backtesting SMA" que ejecuta la estrategia de cruce de medias móviles 20/50 y muestra el rendimiento.
-  - Sección "Predicción Prophet" con gráfico de precios proyectados a 30 días e indicador MAPE.
-  - Sección "Análisis de sentimiento" donde se pueden buscar noticias relacionadas con el activo y se muestra el porcentaje de positivas/negativas/neutrales.
-  - Botones "Comprar" y "Vender" (solo si el usuario ha iniciado sesión) que abren un modal para introducir cantidad.
+La funcionalidad principal es analizar activos. Así se hace:
 
-> [FIGURA: Dashboard de un activo (AAPL) mostrando gráfico de velas y pestaña de indicadores.] <fig:manual_dashboard>
+1. En el buscador central, escribe el nombre o símbolo de un activo (por
+  ejemplo, "Apple", "AAPL", "Bitcoin", "EUR/USD").
+2. Aparecerán sugerencias; selecciona una para ir al dashboard.
+3. El dashboard tiene varias pestañas:
+
+  - *Resumen*: principales indicadores (apertura, máximo, mínimo, variación) y
+    una tabla con el rendimiento en 1 semana, 1 mes y 3 meses.
+  - *Gráficas*: gráfico interactivo (velas o líneas) con selector de período
+    (1d, 5d, 1m, 3m, 6m, 1y, 5y, max). Puedes hacer zoom y descargar la imagen.
+  - *Análisis técnico*: indicadores (SMA20, SMA50, RSI, MACD, Bollinger,
+    estocástico), recomendación (Comprar/Vender/Mantener) con nivel de
+    confianza, backtesting del cruce SMA 20/50 y niveles de soporte/resistencia.
+  - *Noticias y sentimiento*: noticias del activo, cada una con su sentimiento
+    (positivo/neutral/negativo) y un gráfico circular resumen.
+  - *Datos históricos*: tabla con fechas, precios de apertura, máximo, mínimo,
+    cierre y volumen. Puedes filtrar por fechas.
+  - *Fundamental*: datos de la empresa (capitalización, PER, beneficio por
+    acción, dividendos, etc.).
+
+4. Además, desde esta pantalla puedes marcar el activo como favorito (estrella),
+  comprar o vender acciones (botones que abren un modal, solo si has iniciado
+  sesión).
+
+#figure(
+  image("../Figures/Template/Apendices/mockup_dashboard.png", width: 100%),
+  caption: [Dashboard de un activo (ejemplo: Apple Inc.).],
+) <fig:ap_dashboard>
 
 === A.5. Cartera virtual
 
-- Accesible desde el menú superior (icono de cartera o "Cartera").
-- Muestra:
-  - Tarjeta con saldo actual, total depositado/retirado y beneficio no realizado.
-  - Gráfico de evolución del balance a lo largo del tiempo.
-  - Lista de transacciones (compra/venta) con fecha, símbolo, cantidad, precio y total.
-  - Botón "Depositar" y "Retirar" para añadir/quitar dinero virtual (útil para pruebas).
-  - Gráfico de tarta con la composición de la cartera (porcentaje de cada activo).
+En el menú superior, entra en "Cartera". Aquí ves:
 
-> [FIGURA: Página de cartera virtual con tarjeta de resumen y gráfico de evolución.] <fig:manual_cartera>
+- Una tarjeta con tu saldo actual, total depositado, total retirado y beneficio
+  no realizado.
+- Un gráfico de líneas con la evolución de tu balance (puedes seleccionar
+  período: 1 semana, 1 mes, 3 meses, 1 año).
+- Un gráfico de tarta con la composición de tu cartera (qué porcentaje
+  representa cada activo).
+- Una tabla con las transacciones recientes (ordenadas por fecha) y paginación.
+
+También puedes añadir o retirar dinero virtual para hacer pruebas.
+
+#figure(
+  image("../Figures/Template/Apendices/mockup_portfolio.png", width: 100%),
+  caption: [Página de cartera virtual.],
+) <fig:ap_portfolio>
 
 === A.6. Favoritos
 
-- En cualquier dashboard, se puede marcar/desmarcar una estrella para añadir/quitar el activo de favoritos.
-- Todos los favoritos se listan en la página "Favoritos", mostrando precio actual, cambio diario y enlace al dashboard.
+En cualquier dashboard, haz clic en la estrella para añadir o quitar un activo
+de favoritos. La página "Favoritos" lista todos los que hayas marcado,
+mostrando:
 
-> [FIGURA: Página de favoritos con lista de activos.] <fig:manual_favoritos>
+- Símbolo y nombre.
+- Precio actual y cambio diario.
+- Un botón "Ver detalle" para ir al dashboard.
+
+#figure(
+  image("../Figures/Template/Apendices/mockup_favorites.png", width: 100%),
+  caption: [Página de favoritos.],
+) <fig:ap_favorites>
 
 === A.7. Noticias y análisis de sentimiento
 
-- En la página "Noticias", se puede escribir una palabra clave (ej. "tecnología", "bitcoin") y obtener noticias recientes.
-- Cada noticia se muestra con su título, fuente, fecha y un icono indicando el sentimiento (positivo, neutral, negativo) basado en el análisis de FinBERT o el modelo español.
-- Un gráfico circular resume el porcentaje de noticias por sentimiento.
+En la página "Noticias" puedes buscar por palabra clave (por ejemplo,
+"tecnología", "bitcoin", "inflación"). Al buscar:
 
-> [FIGURA: Página de noticias con búsqueda y gráfico de sentimiento.] <fig:manual_noticias>
+- Aparece un gráfico circular con el resumen del sentimiento de las noticias
+  encontradas.
+- Cada resultado se muestra como una tarjeta con título, fuente, fecha y un
+  icono que indica el sentimiento. Si haces clic en la tarjeta, se abre la
+  noticia original en otra pestaña.
+
+#figure(
+  image("../Figures/Template/Apendices/mockup_news.png", width: 100%),
+  caption: [Página de noticias con análisis de sentimiento.],
+) <fig:ap_news>
 
 === A.8. Configuración del perfil y RGPD
 
-- En el menú de usuario, seleccionar "Perfil".
-- Se pueden editar los datos personales (nombre, email) y cambiar la contraseña.
-- Botón "Exportar mis datos": descarga un archivo JSON con toda la información del usuario (transacciones, favoritos, perfil).
-- Botón "Eliminar mi cuenta": tras confirmar, borra permanentemente todos los datos asociados.
+En el menú de usuario, selecciona "Perfil". Desde aquí puedes:
 
-> [FIGURA: Página de perfil con opciones de exportación y eliminación de cuenta.] <fig:manual_perfil>
+- Cambiar tu nombre y email.
+- Cambiar la contraseña (necesitas la actual).
+- Exportar todos tus datos a un archivo JSON (para llevar tus datos a otra
+  parte).
+- Eliminar la cuenta permanentemente (pide confirmación doble; se borran
+  cartera, transacciones, favoritos y tokens).
 
-=== A.9. Ayuda
+#figure(
+  image("../Figures/Template/Apendices/mockup_profile.png", width: 100%),
+  caption: [Página de perfil de usuario.],
+) <fig:ap_profile>
 
-- Desde el menú "Ayuda" se accede a tres páginas estáticas: "Análisis", "Cartera" y "Noticias", que explican el funcionamiento de cada sección y algunos conceptos financieros básicos.
+=== A.9. Ayuda integrada
+
+En el menú "Ayuda" hay tres páginas: "Análisis técnico", "Cartera virtual" y
+"Noticias". Explican cómo funciona cada sección, qué significan los indicadores
+y cómo interpretar las predicciones y el sentimiento. Están traducidas a ambos
+idiomas.
+
+#figure(
+  image("../Figures/Template/Apendices/mockup_help.png", width: 100%),
+  caption: [Página de ayuda (ejemplo: Análisis técnico).],
+) <fig:ap_help>
 
 == B. Vista del sitio web (Back-end)
 
-Aunque #emph[FinancialPulse] no tiene un panel de administración específico, el backend expone una API REST que puede ser consultada con herramientas como Postman. Los administradores pueden acceder directamente a la base de datos (PostgreSQL) para gestionar usuarios o transacciones si fuera necesario.
+FinancialPulse no tiene un panel de administración gráfico, pero el backend
+expone una API REST. Puedes consultarla con herramientas como *Thunder Client*
+(extensión de VSCode). Durante el desarrollo hice pruebas con endpoints como
+`/api/register`, `/api/dashboard`, `/api/accion` y `/api/recommendation`. Los
+administradores también pueden conectarse directamente a la base de datos
+PostgreSQL si necesitan hacer consultas o mantenimiento.
 
-> [FIGURA: Captura de Postman mostrando una petición GET a `/api/historical/AAPL`.] <fig:backend_api>
+La siguiente imagen muestra una petición GET a `/api/dashboard/AAPL` con Thunder
+Client, que devuelve un JSON con datos históricos, predicción, noticias con
+sentimiento e información fundamental.
 
-El código fuente del backend está disponible en el repositorio de GitHub. Las principales rutas de la API son:
+#figure(
+  image("../Figures/Template/Apendices/thunder_client.png", width: 100%),
+  caption: [Ejemplo de petición a la API con Thunder Client.],
+) <fig:ap_thunder_client>
 
-- `POST /api/register` - registro de usuario.
-- `POST /api/login` - inicio de sesión.
-- `GET /api/logout` - cierre de sesión.
-- `GET /api/historical/<symbol>` - datos históricos (parametrizable por período).
-- `GET /api/indicators/<symbol>` - indicadores técnicos.
-- `GET /api/prediction/<symbol>` - predicción Prophet.
-- `POST /api/buy` - comprar acciones (requiere autenticación).
-- `POST /api/sell` - vender acciones (requiere autenticación).
-- `GET /api/portfolio` - obtener cartera del usuario.
-- `GET /api/favorites` - obtener favoritos del usuario.
-- `POST /api/favorites` - añadir/quitar favorito.
-- `GET /api/news?q=<query>` - noticias con análisis de sentimiento.
-- `GET /api/export-data` - exportar datos personales (RGPD).
-- `DELETE /api/delete-account` - eliminar cuenta.
+La lista completa de endpoints está en la tabla de la sección 5.2 (capítulo 5).
+Para más detalles, consulta el código fuente en GitHub.
 
-== C. Tableros Scrum con Jira Software
+== C. Tableros de gestión de proyectos con Trello
 
-El desarrollo se gestionó mediante Jira, utilizando tableros Kanban para cada sprint. A continuación se muestran capturas de los tableros de los 5 sprints definidos.
+Para seguir el desarrollo usé Trello, adaptando Scrum a un único desarrollador.
+Hice 5 sprints de 4 semanas cada uno. Aquí están las capturas de los tableros
+Kanban con las tareas de cada sprint.
 
-> [FIGURA: Tablero del Sprint 1 (configuración inicial y autenticación).] <fig:jira_sprint1>
-> [FIGURA: Tablero del Sprint 2 (integración con Yahoo Finance y gráficos).] <fig:jira_sprint2>
-> [FIGURA: Tablero del Sprint 3 (indicadores, predicción y sentimiento).] <fig:jira_sprint3>
-> [FIGURA: Tablero del Sprint 4 (cartera virtual y backtesting).] <fig:jira_sprint4>
-> [FIGURA: Tablero del Sprint 5 (internacionalización, RGPD, pruebas y documentación).] <fig:jira_sprint5>
+#figure(
+  image("../Figures/Template/Apendices/trello_sprint1.png", width: 100%),
+  caption: [Tablero del Sprint 1 (configuración inicial y autenticación).],
+) <fig:ap_trello1>
 
-== D. Manual técnico de despliegue
+#figure(
+  image("../Figures/Template/Apendices/trello_sprint2.png", width: 100%),
+  caption: [Tablero del Sprint 2 (integración con Yahoo Finance y gráficos).],
+) <fig:ap_trello2>
 
-=== D.1. Requisitos
+#figure(
+  image("../Figures/Template/Apendices/trello_sprint3.png", width: 100%),
+  caption: [Tablero del Sprint 3 (indicadores, predicción y sentimiento).],
+) <fig:ap_trello3>
 
-- Tener instalado Docker y Docker Compose.
+#figure(
+  image("../Figures/Template/Apendices/trello_sprint4.png", width: 100%),
+  caption: [Tablero del Sprint 4 (cartera virtual y backtesting).],
+) <fig:ap_trello4>
+
+#figure(
+  image("../Figures/Template/Apendices/trello_sprint5.png", width: 100%),
+  caption: [Tablero del Sprint 5 (internacionalización, RGPD, pruebas y
+    documentación).],
+) <fig:ap_trello5>
+
+== D. Manual técnico de despliegue con Docker
+
+Este manual explica cómo montar la aplicación completa (backend + frontend +
+base de datos) usando contenedores Docker.
+
+=== D.1. Requisitos previos
+
+- Tener instalados *Docker* y *Docker Compose*.
 - (Opcional) Git para clonar el repositorio.
 
 === D.2. Clonar el repositorio
 
 ```bash
-git clone https://github.com/tu_usuario/FinancialPulse.git
-cd FinancialPulse```
+git clone https://github.com/rafaelluqueframit/FinancialPulse.git
+cd FinancialPulse
+```
+=== D.3. Configurar variables de entorno
 
-=== D.3. Configuración de variables de entorno
-
-Crear un archivo `.env` en la raíz del proyecto (junto al `docker-compose.yml`) con el siguiente contenido:
+Crea un archivo .env en la raíz del proyecto (junto al docker-compose.yml) con
+este contenido:
 
 #figure(
   ```env
-  NEWS_API_KEY=tu_clave_de_newsapi
-  FLASK_SECRET_KEY=clave_secreta_aleatoria
+    NEWS_API_KEY=tu_clave_de_newsapi,
+  SECRET_KEY=clave_secreta_aleatoria
   ```,
   caption: [Archivo `.env` de ejemplo.],
-) <code:env>
+) <code:env_dotenv>
 
-- #strong[NEWS_API_KEY]: Obligatoria para el módulo de noticias. Se obtiene registrándose en https://newsapi.org.
-- #strong[FLASK_SECRET_KEY]: Clave secreta para las sesiones de Flask. Puede ser cualquier cadena aleatoria (ej. generada con `openssl rand -hex 32`).
+- `NEWS_API_KEY`: necesaria para las noticias. La obtienes registrándote en
+  https://newsapi.org.
+- `SECRET_KEY`: clave secreta para las sesiones de Flask. Puedes generarla con
+  `openssl rand -hex 32` o cualquier cadena aleatoria.
 
-Si no se proporciona `NEWS_API_KEY`, el módulo de noticias devolverá un error controlado (el resto de la aplicación funcionará).
+Si no pones `NEWS_API_KEY`, el módulo de noticias dará error controlado, pero el
+resto funcionará.
 
 === D.4. Construir y ejecutar con Docker Compose
 
-Asegúrate de estar en la carpeta raíz del proyecto (donde está el `docker-compose.yml`) y ejecuta:
+Ejecuta desde la raíz del proyecto:
 
 #figure(
   ```bash
@@ -158,85 +260,102 @@ Asegúrate de estar en la carpeta raíz del proyecto (donde está el `docker-com
 ) <code:docker_build>
 
 Este comando:
-- Construye las imágenes de los tres servicios (`db`, `backend`, `frontend`).
+- Construye las imágenes de los tres servicios: `db` (PostgreSQL), `backend`
+  (Flask) y `frontend` (Angular).
 - Levanta los contenedores y muestra los logs en la terminal.
-- El frontend estará accesible en `http://localhost:4200`.
-- El backend expone su API en `http://localhost:5000`.
+- El frontend estará en `http://localhost`.
+- El backend en `http://localhost:5000`.
+- La base de datos en `localhost:5432` (solo para desarrollo).
 
 Para ejecutar en segundo plano (modo detach):
 
-#figure(
-  ```bash
-  docker-compose up --build -d
-  ```,
-  caption: [Comando para levantar los contenedores en segundo plano.],
-) <code:docker_up_detach>
+```bash
+docker-compose up --build -d
+```
 
 === D.5. Detener los contenedores
 
-Para detener los contenedores sin eliminar los datos (la base de datos persistirá):
+- Sin borrar los datos (la base de datos persistirá):
+```bash
+docker-compose down
+```
+- Borrando también los volúmenes (se pierden los datos de la BD):
+```bash
+docker-compose down -v
+```
 
-#figure(
-  ```bash
-  docker-compose down
-  ```,
-  caption: [Detener contenedores.],
-) <code:docker_down>
+=== D.6. Acceso a la base de datos
 
-Para detener los contenedores y eliminar también los volúmenes (borrará todos los datos de la base de datos):
+Para conectarte directamente a PostgreSQL dentro del contenedor:
 
-#figure(
-  ```bash
-  docker-compose down -v
-  ```,
-  caption: [Detener contenedores y eliminar volúmenes.],
-) <code:docker_down_volumes>
+```bash
+docker exec -it FinancialPulse-db-1 psql -U postgres -d financial_pulse_db
+```
+
+La contraseña está en el archivo docker-compose.yml. En producción se recomienda
+cambiarla por una segura.
 
 == E. Código fuente
 
-El código fuente completo del proyecto está disponible en el siguiente repositorio de GitHub:
+El código completo está en GitHub:
 
 #figure(
   ```bash
-  https://github.com/tu_usuario/FinancialPulse
+    https://github.com/rafaelluqueframit/FinancialPulse
   ```,
   caption: [Repositorio del proyecto.],
 ) <code:github>
 
-El repositorio contiene las siguientes carpetas principales:
+La estructura es:
 
-- #strong[`frontend/`]: Aplicación Angular (código TypeScript, componentes, servicios, estilos).
-- #strong[`backend/`]: Aplicación Flask (Python, rutas, modelos SQLAlchemy, módulos de predicción y sentimiento).
-- #strong[`docker-compose.yml`]: Orquestación de contenedores para desarrollo y producción.
-- #strong[`doc/`]: Código fuente de esta memoria en Typst.
+- `frontend/`: aplicación Angular (TypeScript, componentes, servicios,
+  directivas, pipes, modelos).
+- `backend/`: aplicación Flask con `app.py`, modelos SQLAlchemy, funciones
+  auxiliares y Dockerfile.
+- `doc/`: memoria en Typst (capítulos, figuras, bibliografía).
+- `docker-compose.yml`: orquestación de los tres servicios.
+- `.gitignore`: archivos ignorados por Git.
 
-Para clonar el repositorio y trabajar en local:
+Para clonarlo y trabajar en local:
 
-#figure(
-  ```bash
-  git clone https://github.com/tu_usuario/FinancialPulse.git
-  cd FinancialPulse
-  ```,
-  caption: [Clonación del repositorio.],
-) <code:git_clone>
+```bash
+git clone https://github.com/rafaelluqueframit/FinancialPulse.git
+cd FinancialPulse
+```
 
-Toda la implementación se ha realizado siguiendo buenas prácticas de desarrollo (código limpio, comentarios en inglés y español, commits semánticos). Se ha utilizado Git Flow como modelo de ramificación.
+== F. Enlaces de interés y recursos
 
-== F. Enlaces de interés
+- Repositorio de GitHub: https://github.com/rafaelluqueframit/FinancialPulse
 
-- #strong[Repositorio de código]: `https://github.com/tu_usuario/FinancialPulse`
-- #strong[Sitio web desplegado (si aplica)]: `https://financialpulse.example.com`
-- #strong[Video explicativo]: `https://youtu.be/XXXXXXXXXXX`
+- Vídeo explicativo de la aplicación subido a YouTube:
+  https://youtu.be/nQdJkLslpP0
+Muestra un recorrido por todas las funcionalidades.
 
-> El video muestra un recorrido por las principales funcionalidades de la aplicación: registro de usuario, búsqueda de activos, visualización de gráficos e indicadores técnicos, predicción de precios con Prophet, análisis de sentimiento de noticias, compra/venta en la cartera virtual, exportación de datos personales (RGPD) y cambio de idioma.
+- Documentación de APIs externas:
 
-- #strong[Documentación de APIs utilizadas]:
-  - Yahoo Finance (yfinance): https://pypi.org/project/yfinance/
-  - NewsAPI: https://newsapi.org/
-- #strong[Herramientas de desarrollo]:
-  - Angular: https://angular.dev/
+  - Yahoo Finance (yfinance): https://finance.yahoo.com/lookup
+
+  - NewsAPI: https://newsapi.org/docs/endpoints/everything
+
+- Documentación de herramientas y librerías:
+
+  - Angular: https://angular.io/docs
+
   - Flask: https://flask.palletsprojects.com/
-  - Docker: https://www.docker.com/
-  - Typst (para la memoria): https://typst.app/
 
-Toda la documentación adicional (diagramas de Gantt, capturas de pantalla, archivos de configuración, etc.) se encuentra en la carpeta `doc/figures/` del repositorio o se puede solicitar al autor.
+  - PostgreSQL: https://www.postgresql.org/docs/
+
+  - Docker: https://docs.docker.com/
+
+  - Prophet: https://facebook.github.io/prophet/docs/quick_start.html
+
+  - FinBERT: https://huggingface.co/ProsusAI/finbert
+
+  - Typst: https://typst.app/docs
+
+- La plantilla de la memoria está basada en la proporcionada por la UGR,
+  modificada para adaptarla al proyecto.
+
+Toda la documentación adicional (diagramas de secuencia, capturas originales,
+archivos de configuración, etc.) está en la carpeta doc/Figures/ del
+repositorio, o se puede solicitar al autor.
