@@ -6,9 +6,9 @@ En este capítulo se muestra la planificación temporal, el presupuesto estimado
 la metodología de desarrollo (Scrum adaptado a un desarrollador único). Además,
 se describen los perfiles de usuario (personas) y escenarios de uso que me
 ayudaron a definir las funcionalidades prioritarias y a diseñar una interfaz más
-intuitiva y agradable para el usuario final. Finalmente, se presentan varios
-diagramas de secuencia para visualizar cómo se comunican los distintos
-componentes del sistema.
+intuitiva y agradable para el usuario final. Finalmente, se presenta un análisis
+de requisitos, varios diagramas de secuencia para visualizar cómo se comunican
+los distintos componentes del sistema.
 
 == Metodología de desarrollo
 
@@ -528,7 +528,7 @@ conseguir un objetivo determinado.
   caption: [Escenario 1: Alberto prueba y ejecuta una estrategia de trading.],
 ) <fig:escenario1>
 
-La Tabla 4.11 presenta el perfil de Alberto Gutiérrez, un usuario que busca
+La Tabla 4.13 presenta el perfil de Alberto Gutiérrez, un usuario que busca
 validar estrategias de trading con datos históricos. Este escenario refleja el
 uso de la plataforma desde una perspectiva más analítica. Alberto no confía
 ciegamente en ninguna estrategia, sino que quiere comprobar con datos históricos
@@ -600,6 +600,60 @@ cuantitativa para sus análisis. Además, marca Bitcoin como favorito para segui
 su evolución sin tener que buscarlo cada vez. Finalmente, exporta todos sus
 datos (perfil, transacciones, favoritos) en formato JSON, tal como requiere el
 RGPD, para incluirlos como anexo en su memoria académica.
+
+
+== Análisis de requisitos
+
+En primer lugar, se realiza un análisis de requisitos para definir claramente
+qué funcionalidades debe tener la aplicación y qué características no
+funcionales se deben cumplir. Este análisis es fundamental para guiar el
+desarrollo y asegurarse de que el producto final cumpla con las expectativas de
+los usuarios y los objetivos del proyecto.
+
+=== Requisitos funcionales (RF)
+
+- *RF-01*: Gestión de usuarios: registro, inicio de sesión, cierre de sesión,
+  recuperación de contraseña, edición del perfil.
+- *RF-02*: Búsqueda de activos financieros (acciones, criptomonedas, índices,
+  divisas) con autocompletado.
+- *RF-03*: Visualización de datos históricos en gráficos de líneas y velas, con
+  selección de período (1 semana, 1 mes, 3 meses, 1 año, 5 años, máximo).
+- *RF-04*: Cálculo y visualización de indicadores técnicos (RSI, MACD, SMA,
+  Bandas de Bollinger, estocástico).
+- *RF-05*: Backtesting de la estrategia de cruce de medias móviles (SMA 20/50)
+  sobre datos históricos.
+- *RF-06*: Predicción de precios futuros (30 días) usando Prophet, con
+  intervalos de confianza y error MAPE.
+- *RF-07*: Análisis de sentimiento de noticias financieras (positivo, neutral,
+  negativo) mediante FinBERT (inglés) y `bardsai/finance-sentiment-es-base`
+  (español).
+- *RF-08*: Cartera virtual: saldo inicial 10.000 USD, compra/venta, historial,
+  valoración en tiempo real, gráfico de evolución y composición (tarta).
+- *RF-09*: Favoritos: marcar activos y una página dedicada.
+- *RF-10*: Noticias: búsqueda por palabra clave, ordenación por fecha o
+  sentimiento, resumen con gráfico circular.
+- *RF-11*: Internacionalización completa (español/inglés) con pipe de traducción
+  propio y selector de idioma.
+- *RF-12*: Tooltips explicativos en elementos clave, traducidos automáticamente.
+- *RF-13*: Exportación de datos personales en JSON (RGPD).
+- *RF-14*: Eliminación de la cuenta en cascada (cartera, transacciones,
+  favoritos).
+- *RF-15*: Ayuda integrada con páginas estáticas (Análisis, Cartera, Noticias).
+
+=== Requisitos no funcionales (RNF)
+
+- *RNF-01*: El frontend debe ser una SPA responsive, funcional en navegadores
+  modernos (Chrome, Firefox, Edge).
+- *RNF-02*: El tiempo de respuesta de la API no debe superar los 3 segundos en
+  condiciones normales.
+- *RNF-03*: La aplicación debe poder desplegarse con Docker (docker-compose up).
+- *RNF-04*: Las contraseñas se almacenarán cifradas (bcrypt).
+- *RNF-05*: La comunicación frontend-backend será mediante API REST con
+  autenticación por sesión (cookies).
+- *RNF-06*: El código fuente estará en GitHub con licencia de código abierto
+  (MIT).
+- *RNF-07*: La interfaz debe ser intuitiva, con ayuda integrada y tooltips.
+
 
 == Backlogs y requisitos
 
@@ -783,204 +837,6 @@ concretas que se realizaron durante esas cuatro semanas.
   caption: [Sprint backlog del sprint 1.],
 ) <tabla:sprint_backlog>
 
-== Diagramas de secuencia
-
-Para terminar el capítulo, a continuación se incluyen varios diagramas de
-secuencia. Son una forma visual de entender cómo interactúan el frontend, el
-backend, la base de datos y las APIs externas durante las operaciones más
-importantes. Cada diagrama se centra en un flujo concreto.
-
-=== Diagrama de secuencia: Registro de usuario
-
-La siguiente Figura 4.5 muestra el diagrama de secuencia para el registro de
-usuario. Este diagrama representa el proceso de creación de una cuenta nueva. El
-usuario rellena el formulario con nombre, email y contraseña, y envía los datos.
-El backend comprueba que el email no esté ya registrado. Si la validación es
-correcta, se crea un nuevo registro en la tabla `usuario`, se genera
-automáticamente una cartera asociada con saldo inicial de 10.000 USD y se
-devuelve una confirmación al frontend. Si el email ya existe, se devuelve un
-error.
-
-#figure(
-  image("../Figures/Template/Chapter3/diagrama_secuencia1.png", width: 100%),
-  caption: [Diagrama de secuencia para el registro de usuario.],
-) <fig:seq_registro_img>
-
-=== Diagrama de secuencia: Inicio de sesión de un usuario
-
-Una vez registrado, el usuario inicia sesión con su email y contraseña. El
-backend consulta la base de datos y, si las credenciales son correctas, crea una
-sesión almacenando el `user_id` en una cookie. Si no lo son, responde con un
-error HTTP 401. A partir de ese momento, cada petición del frontend incluirá la
-cookie y el backend podrá identificar al usuario sin necesidad de volver a
-autenticarse. La siguiente Figura 4.6 muestra el diagrama de secuencia para este
-proceso.
-
-#figure(
-  image("../Figures/Template/Chapter3/diagrama_secuencia2.png", width: 100%),
-  caption: [Diagrama de secuencia para el inicio de sesión de un usuario.],
-) <fig:seq_login_img>
-
-=== Diagrama de secuencia: Recuperación de contraseña
-
-Cuando un usuario olvida su contraseña, puede solicitar un código de
-verificación introduciendo su email. El backend genera un token numérico
-aleatorio de seis dígitos, lo almacena en la tabla `reset_token` con una validez
-de una hora, y lo muestra por consola (en una versión real se enviaría por
-correo electrónico). Después, el usuario introduce el código y la nueva
-contraseña. El backend valida que el token sea correcto y no haya expirado, y
-actualiza el campo `password_hash`. Si el token es inválido o ha caducado, se
-devuelve un error. La Figura 4.7 muestra el diagrama de secuencia para este
-proceso de recuperación
-
-#figure(
-  image("../Figures/Template/Chapter3/diagrama_secuencia3.png", width: 100%),
-  caption: [Diagrama de secuencia para la recuperación de contraseña.],
-) <fig:seq_recovery_img>
-
-=== Diagrama de secuencia: Obtener datos de una acción (dashboard)
-
-La siguiente Figura 4.8 muestra el diagrama de secuencia para obtener datos de
-una acción. Este diagrama es uno de los más complejos, porque el dashboard
-agrupa mucha información. El frontend pide al backend los datos históricos (con
-un período configurable, por ejemplo 6 meses), la información general del activo
-(nombre, sector, etc.), la predicción de Prophet y las noticias relacionadas. El
-backend consulta Yahoo Finance, ejecuta el modelo de predicción (entrenándolo
-bajo demanda), llama a NewsAPI y analiza el sentimiento de cada noticia con el
-modelo correspondiente (FinBERT para inglés o el modelo español). Finalmente,
-devuelve un único JSON con todos los datos agregados. El frontend se encarga de
-mostrarlos en las diferentes pestañas del dashboard.
-
-#figure(
-  image("../Figures/Template/Chapter3/diagrama_secuencia4.png", width: 100%),
-  caption: [Diagrama de secuencia para obtener datos de una acción.],
-) <fig:seq_dashboard_img>
-
-=== Diagrama de secuencia: Comprar una acción en la cartera virtual
-
-Cuando el usuario decide comprar acciones desde el dashboard, el frontend envía
-al backend el símbolo del activo, la cantidad deseada y el precio actual. El
-backend localiza la cartera del usuario y comprueba si el saldo es suficiente.
-Si lo es, resta el importe total, incrementa el contador de transacciones y
-registra la operación en la tabla `transaccion` con tipo `compra`. Después,
-devuelve el nuevo saldo al frontend, que actualiza la interfaz. Si el saldo no
-es suficiente, se devuelve un error. La Figura 4.9 muestra el diagrama de
-secuencia para este proceso de compra en la cartera virtual.
-
-#figure(
-  image("../Figures/Template/Chapter3/diagrama_secuencia5.png", width: 100%),
-  caption: [Diagrama de secuencia para comprar una acción en la cartera
-    virtual.],
-) <fig:seq_compra_img>
-
-=== Diagrama de secuencia: Vender una acción (cartera virtual)
-
-El proceso de venta es simétrico al de compra, pero con una comprobación
-adicional: el usuario solo puede vender acciones que realmente posea. El backend
-calcula primero la posición actual del usuario para ese activo, sumando todas
-las compras y restando las ventas previas. Si la cantidad que se quiere vender
-no supera la disponible, se actualiza el saldo (sumando el ingreso), se
-incrementa el contador de transacciones y se registra una transacción de tipo
-`venta`. Si el usuario intenta vender más acciones de las que tiene, se devuelve
-un error. La Figura 4.10 muestra el diagrama de secuencia para este proceso de
-venta en la cartera virtual.
-
-#figure(
-  image("../Figures/Template/Chapter3/diagrama_secuencia6.png", width: 100%),
-  caption: [Diagrama de secuencia para vender una acción en la cartera
-    virtual.],
-) <fig:seq_venta_img>
-
-=== Diagrama de secuencia: Obtener noticias
-
-La aplicación permite buscar noticias financieras por palabra clave e idioma. El
-backend llama a NewsAPI con los parámetros adecuados, recibe una lista de
-artículos y, para cada uno, analiza el sentimiento del título y la descripción
-usando el modelo correspondiente según el idioma detectado. Luego agrupa los
-resultados por sentimiento y calcula porcentajes. Finalmente, devuelve al
-frontend tanto las noticias enriquecidas con su etiqueta de sentimiento como un
-resumen visual (porcentajes) que se muestra en un gráfico circular. La Figura
-4.11 muestra el diagrama de secuencia para este proceso de obtención y análisis
-de noticias financieras.
-
-#figure(
-  image("../Figures/Template/Chapter3/diagrama_secuencia7.png", width: 100%),
-  caption: [Diagrama de secuencia para obtener noticias financieras.],
-) <fig:seq_noticias_img>
-
-=== Diagrama de secuencia: Editar perfil de un usuario
-
-El usuario puede modificar su nombre, email o contraseña desde la página de
-perfil. Para cambiar la contraseña, es obligatorio introducir primero la actual.
-Si el usuario cambia el email, el backend comprueba que el nuevo email no
-pertenezca ya a otra cuenta. Tras pasar las validaciones, se actualizan los
-campos en la tabla `usuario` y se confirma la operación. En caso de error
-(contraseña actual incorrecta, email duplicado, etc.), se devuelve el mensaje
-correspondiente. La Figura 4.12 muestra el diagrama de secuencia para este
-proceso de edición del perfil de usuario.
-
-#figure(
-  image("../Figures/Template/Chapter3/diagrama_secuencia8.png", width: 100%),
-  caption: [Diagrama de secuencia para editar el perfil de un usuario.],
-) <fig:seq_perfil_img>
-
-Estos diagramas permiten visualizar de manera más clara la interacción entre los
-distintos componentes del sistema y sirven como base para la implementación
-descrita en los capítulos posteriores. Aunque el diseño preliminar siempre varía
-un poco al llevarlo a la práctica, tenerlos fue de gran ayuda para no perderme
-en la comunicación entre partes.
-
-== Análisis de requisitos
-
-A continuación, se realiza un análisis de requisitos para definir claramente qué
-funcionalidades debe tener la aplicación y qué características no funcionales se
-deben cumplir. Este análisis es fundamental para guiar el desarrollo y
-asegurarse de que el producto final cumpla con las expectativas de los usuarios
-y los objetivos del proyecto.
-
-=== Requisitos funcionales (RF)
-
-- *RF-01*: Gestión de usuarios: registro, inicio de sesión, cierre de sesión,
-  recuperación de contraseña, edición del perfil.
-- *RF-02*: Búsqueda de activos financieros (acciones, criptomonedas, índices,
-  divisas) con autocompletado.
-- *RF-03*: Visualización de datos históricos en gráficos de líneas y velas, con
-  selección de período (1 semana, 1 mes, 3 meses, 1 año, 5 años, máximo).
-- *RF-04*: Cálculo y visualización de indicadores técnicos (RSI, MACD, SMA,
-  Bandas de Bollinger, estocástico).
-- *RF-05*: Backtesting de la estrategia de cruce de medias móviles (SMA 20/50)
-  sobre datos históricos.
-- *RF-06*: Predicción de precios futuros (30 días) usando Prophet, con
-  intervalos de confianza y error MAPE.
-- *RF-07*: Análisis de sentimiento de noticias financieras (positivo, neutral,
-  negativo) mediante FinBERT (inglés) y `bardsai/finance-sentiment-es-base`
-  (español).
-- *RF-08*: Cartera virtual: saldo inicial 10.000 USD, compra/venta, historial,
-  valoración en tiempo real, gráfico de evolución y composición (tarta).
-- *RF-09*: Favoritos: marcar activos y una página dedicada.
-- *RF-10*: Noticias: búsqueda por palabra clave, ordenación por fecha o
-  sentimiento, resumen con gráfico circular.
-- *RF-11*: Internacionalización completa (español/inglés) con pipe de traducción
-  propio y selector de idioma.
-- *RF-12*: Tooltips explicativos en elementos clave, traducidos automáticamente.
-- *RF-13*: Exportación de datos personales en JSON (RGPD).
-- *RF-14*: Eliminación de la cuenta en cascada (cartera, transacciones,
-  favoritos).
-- *RF-15*: Ayuda integrada con páginas estáticas (Análisis, Cartera, Noticias).
-
-=== Requisitos no funcionales (RNF)
-
-- *RNF-01*: El frontend debe ser una SPA responsive, funcional en navegadores
-  modernos (Chrome, Firefox, Edge).
-- *RNF-02*: El tiempo de respuesta de la API no debe superar los 3 segundos en
-  condiciones normales.
-- *RNF-03*: La aplicación debe poder desplegarse con Docker (docker-compose up).
-- *RNF-04*: Las contraseñas se almacenarán cifradas (bcrypt).
-- *RNF-05*: La comunicación frontend-backend será mediante API REST con
-  autenticación por sesión (cookies).
-- *RNF-06*: El código fuente estará en GitHub con licencia de código abierto
-  (MIT).
-- *RNF-07*: La interfaz debe ser intuitiva, con ayuda integrada y tooltips.
 
 == Casos de uso
 
@@ -993,7 +849,7 @@ hasta la interacción con los datos financieros.
 
 Los actores del sistema son: *Usuario no registrado* (invitado), *Usuario
 registrado* y *Administrador* (aunque no tiene interfaz específica, puede
-acceder directamente a la base de datos). A continuación, en la Figura 4.13 se
+acceder directamente a la base de datos). A continuación, en la Figura 4.5 se
 muestra el diagrama de casos de uso.
 
 #figure(
@@ -1027,6 +883,196 @@ muestra el diagrama de casos de uso.
   exportación; el sistema genera un JSON con sus datos y lo descarga.
 - *CU-11: Eliminar cuenta*: El usuario autenticado confirma la eliminación; el
   sistema borra todos sus datos en cascada.
+
+== Arquitectura del software
+
+FinancialPulse sigue una arquitectura cliente-servidor de tres capas. La
+siguiente Figura 4.6 muestra el esquema general de la arquitectura. El frontend
+(cliente) se encarga de la interfaz de usuario y la interacción, mientras que el
+backend (servidor) maneja la lógica de negocio, la gestión de datos y la
+comunicación con APIs externas. La base de datos almacena la información
+persistente de usuarios, carteras, transacciones y favoritos.
+
+#figure(
+  image("../Figures/Template/Chapter5/diagrama_arquitectura.png", width: 100%),
+  caption: [Diagrama de arquitectura cliente-servidor mostrando los componentes
+    Angular (frontend), Flask (backend), PostgreSQL y las APIs externas (Yahoo
+    Finance, NewsAPI), así como el flujo de peticiones.],
+) <fig:arquitectura>
+
+=== Capas del sistema
+
+- *Capa de presentación (cliente)*: SPA con Angular 21. Se comunica con el
+  backend mediante HTTP y servicios Angular. Usa Tailwind CSS y ngx-echarts.
+- *Capa de lógica de negocio (servidor)*: API REST con Flask. Maneja
+  autenticación, consultas a Yahoo Finance, indicadores técnicos, predicción
+  Prophet, análisis de sentimiento, cartera virtual y favoritos.
+- *Capa de datos*: PostgreSQL 15 con SQLAlchemy.
+
+=== Patrón Modelo-Vista-Controlador (MVC)
+
+Aunque no se aplicó de forma explícita, la estructura se ajusta al patrón MVC.
+Este patrón ayuda a separar las responsabilidades y mantener el código
+organizado:
+
+- *Modelo*: clases SQLAlchemy en backend; interfaces TypeScript en frontend.
+- *Vista*: componentes Angular (HTML+CSS).
+- *Controlador*: servicios Angular (frontend) y rutas Flask (backend).
+
+Separar las responsabilidades de esta manera ayuda a no mezclar lógica de
+negocio con presentación, lo que facilita el mantenimiento y la escalabilidad
+del proyecto. Además, permite que diferentes desarrolladores (no en este caso)
+puedan trabajar en distintas capas sin interferir entre sí.
+
+
+== Diagramas de clases
+
+Los diagramas de clases son una herramienta fundamental para visualizar la
+estructura del software, las entidades que lo componen y sus relaciones. En este
+proyecto, se han creado diagramas de clases a dos niveles: unos más detallados
+(por capas) y otros globales (visión de conjunto). Estos diagramas ayudan a
+entender cómo se organiza el código, qué clases existen, qué atributos y métodos
+tienen, y cómo se relacionan entre sí. A continuación, se presentan los
+diagramas de clases para el backend y el frontend.
+
+=== Backend
+
+==== Modelos del backend
+
+La siguiente Figura 4.7 se refiere al diagrama el cual muestra los modelos
+SQLAlchemy (Usuario, Cartera, Transaccion, Favorito, ResetToken) con sus
+atributos y relaciones (1:1, 1:N). Es la base de todo el sistema de
+persistencia.
+
+#figure(
+  image(
+    "../Figures/Template/Chapter7/diagrama_clases_backend_modelos.drawio.png",
+    width: 120%,
+  ),
+  caption: [Diagrama de clases detallado de los modelos del backend.],
+) <fig:backend_modelos>
+
+==== Controladores (endpoints) del backend
+
+Agrupo las rutas de la API por responsabilidad: `AuthController` (autenticación
+y perfil), `AssetController` (búsqueda y datos de activos),
+`TechnicalController` (indicadores, recomendación, predicción), `NewsController`
+(noticias y sentimiento), `PortfolioController` (cartera virtual) y
+`FavoritesController` (favoritos). Esta separación no es rígida, pero ayuda a
+organizar mentalmente el código. La siguiente Figura 4.8 muestra el diagrama de
+clases de los controladores del backend, con sus métodos y dependencias. Se ve
+claramente cómo cada controlador se apoya en los modelos para acceder a la base
+de datos, y cómo algunos dependen de APIs externas o librerías de IA para
+cumplir su función.
+
+#figure(
+  image(
+    "../Figures/Template/Chapter7/diagrama_clases_backend_controladores.drawio.png",
+    width: 120%,
+  ),
+  caption: [Diagrama de clases detallado de los controladores del backend.],
+) <fig:backend_controladores>
+
+==== Visión global del backend
+
+La siguiente Figura 4.9 se refiere al diagrama global del backend, que integra
+modelos y controladores, mostrando las dependencias y cómo algunos controladores
+se apoyan en APIs externas (Yahoo Finance, NewsAPI) o librerías de IA (Prophet,
+Transformers). Es útil para tener una vista general sin perderse en detalles.
+
+#landscape_page[
+  #figure(
+    image(
+      "../Figures/Template/Chapter7/diagrama_clases_backend.png",
+      width: 100%,
+    ),
+    caption: [Diagrama de clases global del backend.],
+  ) <fig:backend_global>
+]
+
+=== Frontend
+
+==== Modelos del frontend
+
+En Angular se definió interfaces TypeScript que reflejan los datos de la API. La
+siguiente Figura 4.10 muestra el diagrama de clases de los modelos del frontend,
+con sus atributos y métodos. Es una parte fundamental para tipar los datos que
+se manejan en la aplicación y facilitar la comunicación con el backend.
+
+#figure(
+  image(
+    "../Figures/Template/Chapter7/diagrama_clases_frontend_modelos.drawio.png",
+    width: 112%,
+  ),
+  caption: [Diagrama de clases detallado de los modelos del frontend.],
+) <fig:frontend_modelos>
+
+==== Servicios del frontend
+
+La siguiente Figura 4.11 se refiere al diagrama de clases de los servicios
+Angular del frontend. Cada servicio se encarga de una parte concreta de la
+lógica de negocio y la comunicación con el backend. Esta separación es más
+óptima porque mantiene los componentes más limpios. Se ve cómo `AuthService`
+maneja todo lo relacionado con la autenticación, `AssetService`con la búsqueda
+de activos, `DataService` con la obtención de datos para el dashboard,
+`NewsService` con las noticias, `PortfolioService` con la cartera virtual y
+`FavoritesService` con los favoritos. Además, `LanguageService` se encarga de
+lainternacionalización y es utilizado por varios servicios para adaptar los
+textos al idioma seleccionado.
+
+#landscape_page[
+  #figure(
+    image(
+      "../Figures/Template/Chapter7/diagrama_clases_frontend_servicios.drawio.png",
+      width: 100%,
+    ),
+    caption: [Diagrama de clases detallado de los servicios del frontend.],
+  ) <fig:frontend_servicios>
+]
+
+
+==== Vistas principales del frontend
+
+La siguiente Figura 4.12 se refiere al diagrama de clases de las vistas
+principales del frontend. Las vistas son componentes asociados a las rutas:
+`LoginComponent`, `RegisterComponent`, `HomeComponent`, `DashboardComponent`,
+`PortfolioComponent`, `FavoritesComponent`, `NewsComponent`, `ProfileComponent`
+y las páginas de ayuda. Cada vista inyecta los servicios que necesita. Algunas
+son muy sencillas (como la de favoritos) y otras son bastante complejas (como el
+dashboard).
+
+#figure(
+  image(
+    "../Figures/Template/Chapter7/diagrama_clases_frontend_vistas.drawio.png",
+    width: 120%,
+  ),
+  caption: [Diagrama de clases detallado de las vistas principales del
+    frontend.],
+) <fig:frontend_vistas>
+
+==== Visión global del frontend
+
+La siguiente Figura 4.13 muestra el diagrama global del frontend. Integra
+modelos, servicios y vistas. Se ve cómo los servicios dependen de los modelos
+para tipar los datos, y cómo las vistas se apoyan en los servicios. Además,
+`AssetService` y `NewsService` usan `LanguageService` para adaptar los textos al
+idioma. Es una arquitectura bastante estándar en Angular.
+
+#landscape_page[
+  #figure(
+    image(
+      "../Figures/Template/Chapter7/diagrama_clases_frontend.png",
+      width: 100%,
+    ),
+    caption: [Diagrama de clases global del frontend.],
+  ) <fig:frontend_global>
+]
+
+Estos diagramas están simplificados para resaltar las relaciones más
+importantes. Representan fielmente la arquitectura de FinancialPulse y sirven de
+guía para el mantenimiento futuro o para que cualquier desarrollador lo entienda
+rápidamente.
+
 
 == Diseño de la base de datos
 
@@ -1209,193 +1255,154 @@ en `email` (usuario), `simbolo` (transaccion y favorito) y `usuario_id`
 (cartera) para acelerar las consultas más habituales. Sin estos índices, las
 búsquedas serían más lentas a medida que crecieran los datos.
 
-== Diagramas de clases
 
-Los diagramas de clases son una herramienta fundamental para visualizar la
-estructura del software, las entidades que lo componen y sus relaciones. En este
-proyecto, se han creado diagramas de clases a dos niveles: unos más detallados
-(por capas) y otros globales (visión de conjunto). Estos diagramas ayudan a
-entender cómo se organiza el código, qué clases existen, qué atributos y métodos
-tienen, y cómo se relacionan entre sí. A continuación, se presentan los
-diagramas de clases para el backend y el frontend.
+== Diagramas de secuencia
 
-=== Backend
+Para terminar el capítulo, a continuación se incluyen varios diagramas de
+secuencia. Son una forma visual de entender cómo interactúan el frontend, el
+backend, la base de datos y las APIs externas durante las operaciones más
+importantes. Cada diagrama se centra en un flujo concreto.
 
-==== Modelos del backend
+=== Diagrama de secuencia: Registro de usuario
 
-La siguiente Figura 4.15 se refiere al diagrama el cual muestra los modelos
-SQLAlchemy (Usuario, Cartera, Transaccion, Favorito, ResetToken) con sus
-atributos y relaciones (1:1, 1:N). Es la base de todo el sistema de
-persistencia.
-
-#figure(
-  image(
-    "../Figures/Template/Chapter7/diagrama_clases_backend_modelos.drawio.png",
-    width: 120%,
-  ),
-  caption: [Diagrama de clases detallado de los modelos del backend.],
-) <fig:backend_modelos>
-
-==== Controladores (endpoints) del backend
-
-Agrupo las rutas de la API por responsabilidad: `AuthController` (autenticación
-y perfil), `AssetController` (búsqueda y datos de activos),
-`TechnicalController` (indicadores, recomendación, predicción), `NewsController`
-(noticias y sentimiento), `PortfolioController` (cartera virtual) y
-`FavoritesController` (favoritos). Esta separación no es rígida, pero ayuda a
-organizar mentalmente el código. La siguiente Figura 4.16 muestra el diagrama de
-clases de los controladores del backend, con sus métodos y dependencias. Se ve
-claramente cómo cada controlador se apoya en los modelos para acceder a la base
-de datos, y cómo algunos dependen de APIs externas o librerías de IA para
-cumplir su función.
+La siguiente Figura 4.15 muestra el diagrama de secuencia para el registro de
+usuario. Este diagrama representa el proceso de creación de una cuenta nueva. El
+usuario rellena el formulario con nombre, email y contraseña, y envía los datos.
+El backend comprueba que el email no esté ya registrado. Si la validación es
+correcta, se crea un nuevo registro en la tabla `usuario`, se genera
+automáticamente una cartera asociada con saldo inicial de 10.000 USD y se
+devuelve una confirmación al frontend. Si el email ya existe, se devuelve un
+error.
 
 #figure(
-  image(
-    "../Figures/Template/Chapter7/diagrama_clases_backend_controladores.drawio.png",
-    width: 120%,
-  ),
-  caption: [Diagrama de clases detallado de los controladores del backend.],
-) <fig:backend_controladores>
+  image("../Figures/Template/Chapter3/diagrama_secuencia1.png", width: 100%),
+  caption: [Diagrama de secuencia para el registro de usuario.],
+) <fig:seq_registro_img>
 
-==== Visión global del backend
+=== Diagrama de secuencia: Inicio de sesión de un usuario
 
-La siguiente Figura 4.17 se refiere al diagrama global del backend, que integra
-modelos y controladores, mostrando las dependencias y cómo algunos controladores
-se apoyan en APIs externas (Yahoo Finance, NewsAPI) o librerías de IA (Prophet,
-Transformers). Es útil para tener una vista general sin perderse en detalles.
-
-#landscape_page[
-  #figure(
-    image(
-      "../Figures/Template/Chapter7/diagrama_clases_backend.png",
-      width: 100%,
-    ),
-    caption: [Diagrama de clases global del backend.],
-  ) <fig:backend_global>
-]
-
-=== Frontend
-
-==== Modelos del frontend
-
-En Angular se definió interfaces TypeScript que reflejan los datos de la API. La
-siguiente Figura 4.18 muestra el diagrama de clases de los modelos del frontend,
-con sus atributos y métodos. Es una parte fundamental para tipar los datos que
-se manejan en la aplicación y facilitar la comunicación con el backend.
+Una vez registrado, el usuario inicia sesión con su email y contraseña. El
+backend consulta la base de datos y, si las credenciales son correctas, crea una
+sesión almacenando el `user_id` en una cookie. Si no lo son, responde con un
+error HTTP 401. A partir de ese momento, cada petición del frontend incluirá la
+cookie y el backend podrá identificar al usuario sin necesidad de volver a
+autenticarse. La siguiente Figura 4.16 muestra el diagrama de secuencia para
+este proceso.
 
 #figure(
-  image(
-    "../Figures/Template/Chapter7/diagrama_clases_frontend_modelos.drawio.png",
-    width: 112%,
-  ),
-  caption: [Diagrama de clases detallado de los modelos del frontend.],
-) <fig:frontend_modelos>
+  image("../Figures/Template/Chapter3/diagrama_secuencia2.png", width: 100%),
+  caption: [Diagrama de secuencia para el inicio de sesión de un usuario.],
+) <fig:seq_login_img>
 
-==== Servicios del frontend
+=== Diagrama de secuencia: Recuperación de contraseña
 
-La siguiente Figura 4.19 se refiere al diagrama de clases de los servicios
-Angular del frontend. Cada servicio se encarga de una parte concreta de la
-lógica de negocio y la comunicación con el backend. Esta separación es más
-óptima porque mantiene los componentes más limpios. Se ve cómo `AuthService`
-maneja todo lo relacionado con la autenticación, `AssetService`con la búsqueda
-de activos, `DataService` con la obtención de datos para el dashboard,
-`NewsService` con las noticias, `PortfolioService` con la cartera virtual y
-`FavoritesService` con los favoritos. Además, `LanguageService` se encarga de
-lainternacionalización y es utilizado por varios servicios para adaptar los
-textos al idioma seleccionado.
-
-#landscape_page[
-  #figure(
-    image(
-      "../Figures/Template/Chapter7/diagrama_clases_frontend_servicios.drawio.png",
-      width: 100%,
-    ),
-    caption: [Diagrama de clases detallado de los servicios del frontend.],
-  ) <fig:frontend_servicios>
-]
-
-
-==== Vistas principales del frontend
-
-La siguiente Figura 4.20 se refiere al diagrama de clases de las vistas
-principales del frontend. Las vistas son componentes asociados a las rutas:
-`LoginComponent`, `RegisterComponent`, `HomeComponent`, `DashboardComponent`,
-`PortfolioComponent`, `FavoritesComponent`, `NewsComponent`, `ProfileComponent`
-y las páginas de ayuda. Cada vista inyecta los servicios que necesita. Algunas
-son muy sencillas (como la de favoritos) y otras son bastante complejas (como el
-dashboard).
+Cuando un usuario olvida su contraseña, puede solicitar un código de
+verificación introduciendo su email. El backend genera un token numérico
+aleatorio de seis dígitos, lo almacena en la tabla `reset_token` con una validez
+de una hora, y lo muestra por consola (en una versión real se enviaría por
+correo electrónico). Después, el usuario introduce el código y la nueva
+contraseña. El backend valida que el token sea correcto y no haya expirado, y
+actualiza el campo `password_hash`. Si el token es inválido o ha caducado, se
+devuelve un error. La Figura 4.17 muestra el diagrama de secuencia para este
+proceso de recuperación
 
 #figure(
-  image(
-    "../Figures/Template/Chapter7/diagrama_clases_frontend_vistas.drawio.png",
-    width: 120%,
-  ),
-  caption: [Diagrama de clases detallado de las vistas principales del
-    frontend.],
-) <fig:frontend_vistas>
+  image("../Figures/Template/Chapter3/diagrama_secuencia3.png", width: 100%),
+  caption: [Diagrama de secuencia para la recuperación de contraseña.],
+) <fig:seq_recovery_img>
 
-==== Visión global del frontend
+=== Diagrama de secuencia: Obtener datos de una acción (dashboard)
 
-La siguiente Figura 4.21 muestra el diagrama global del frontend. Integra
-modelos, servicios y vistas. Se ve cómo los servicios dependen de los modelos
-para tipar los datos, y cómo las vistas se apoyan en los servicios. Además,
-`AssetService` y `NewsService` usan `LanguageService` para adaptar los textos al
-idioma. Es una arquitectura bastante estándar en Angular.
-
-#landscape_page[
-  #figure(
-    image(
-      "../Figures/Template/Chapter7/diagrama_clases_frontend.png",
-      width: 100%,
-    ),
-    caption: [Diagrama de clases global del frontend.],
-  ) <fig:frontend_global>
-]
-
-Estos diagramas están simplificados para resaltar las relaciones más
-importantes. Representan fielmente la arquitectura de FinancialPulse y sirven de
-guía para el mantenimiento futuro o para que cualquier desarrollador lo entienda
-rápidamente.
-
-== Arquitectura del software
-
-FinancialPulse sigue una arquitectura cliente-servidor de tres capas. La
-siguiente Figura 4.22 muestra el esquema general de la arquitectura. El frontend
-(cliente) se encarga de la interfaz de usuario y la interacción, mientras que el
-backend (servidor) maneja la lógica de negocio, la gestión de datos y la
-comunicación con APIs externas. La base de datos almacena la información
-persistente de usuarios, carteras, transacciones y favoritos.
+La siguiente Figura 4.18 muestra el diagrama de secuencia para obtener datos de
+una acción. Este diagrama es uno de los más complejos, porque el dashboard
+agrupa mucha información. El frontend pide al backend los datos históricos (con
+un período configurable, por ejemplo 6 meses), la información general del activo
+(nombre, sector, etc.), la predicción de Prophet y las noticias relacionadas. El
+backend consulta Yahoo Finance, ejecuta el modelo de predicción (entrenándolo
+bajo demanda), llama a NewsAPI y analiza el sentimiento de cada noticia con el
+modelo correspondiente (FinBERT para inglés o el modelo español). Finalmente,
+devuelve un único JSON con todos los datos agregados. El frontend se encarga de
+mostrarlos en las diferentes pestañas del dashboard.
 
 #figure(
-  image("../Figures/Template/Chapter5/diagrama_arquitectura.png", width: 100%),
-  caption: [Diagrama de arquitectura cliente-servidor mostrando los componentes
-    Angular (frontend), Flask (backend), PostgreSQL y las APIs externas (Yahoo
-    Finance, NewsAPI), así como el flujo de peticiones.],
-) <fig:arquitectura>
+  image("../Figures/Template/Chapter3/diagrama_secuencia4.png", width: 100%),
+  caption: [Diagrama de secuencia para obtener datos de una acción.],
+) <fig:seq_dashboard_img>
 
-=== Capas del sistema
+=== Diagrama de secuencia: Comprar una acción en la cartera virtual
 
-- *Capa de presentación (cliente)*: SPA con Angular 21. Se comunica con el
-  backend mediante HTTP y servicios Angular. Usa Tailwind CSS y ngx-echarts.
-- *Capa de lógica de negocio (servidor)*: API REST con Flask. Maneja
-  autenticación, consultas a Yahoo Finance, indicadores técnicos, predicción
-  Prophet, análisis de sentimiento, cartera virtual y favoritos.
-- *Capa de datos*: PostgreSQL 15 con SQLAlchemy.
+Cuando el usuario decide comprar acciones desde el dashboard, el frontend envía
+al backend el símbolo del activo, la cantidad deseada y el precio actual. El
+backend localiza la cartera del usuario y comprueba si el saldo es suficiente.
+Si lo es, resta el importe total, incrementa el contador de transacciones y
+registra la operación en la tabla `transaccion` con tipo `compra`. Después,
+devuelve el nuevo saldo al frontend, que actualiza la interfaz. Si el saldo no
+es suficiente, se devuelve un error. La Figura 4.19 muestra el diagrama de
+secuencia para este proceso de compra en la cartera virtual.
 
-=== Patrón Modelo-Vista-Controlador (MVC)
+#figure(
+  image("../Figures/Template/Chapter3/diagrama_secuencia5.png", width: 100%),
+  caption: [Diagrama de secuencia para comprar una acción en la cartera
+    virtual.],
+) <fig:seq_compra_img>
 
-Aunque no se aplicó de forma explícita, la estructura se ajusta al patrón MVC.
-Este patrón ayuda a separar las responsabilidades y mantener el código
-organizado:
+=== Diagrama de secuencia: Vender una acción (cartera virtual)
 
-- *Modelo*: clases SQLAlchemy en backend; interfaces TypeScript en frontend.
-- *Vista*: componentes Angular (HTML+CSS).
-- *Controlador*: servicios Angular (frontend) y rutas Flask (backend).
+El proceso de venta es simétrico al de compra, pero con una comprobación
+adicional: el usuario solo puede vender acciones que realmente posea. El backend
+calcula primero la posición actual del usuario para ese activo, sumando todas
+las compras y restando las ventas previas. Si la cantidad que se quiere vender
+no supera la disponible, se actualiza el saldo (sumando el ingreso), se
+incrementa el contador de transacciones y se registra una transacción de tipo
+`venta`. Si el usuario intenta vender más acciones de las que tiene, se devuelve
+un error. La Figura 4.20 muestra el diagrama de secuencia para este proceso de
+venta en la cartera virtual.
 
-Separar las responsabilidades de esta manera ayuda a no mezclar lógica de
-negocio con presentación, lo que facilita el mantenimiento y la escalabilidad
-del proyecto. Además, permite que diferentes desarrolladores (no en este caso)
-puedan trabajar en distintas capas sin interferir entre sí.
+#figure(
+  image("../Figures/Template/Chapter3/diagrama_secuencia6.png", width: 100%),
+  caption: [Diagrama de secuencia para vender una acción en la cartera
+    virtual.],
+) <fig:seq_venta_img>
+
+=== Diagrama de secuencia: Obtener noticias
+
+La aplicación permite buscar noticias financieras por palabra clave e idioma. El
+backend llama a NewsAPI con los parámetros adecuados, recibe una lista de
+artículos y, para cada uno, analiza el sentimiento del título y la descripción
+usando el modelo correspondiente según el idioma detectado. Luego agrupa los
+resultados por sentimiento y calcula porcentajes. Finalmente, devuelve al
+frontend tanto las noticias enriquecidas con su etiqueta de sentimiento como un
+resumen visual (porcentajes) que se muestra en un gráfico circular. La Figura
+4.21 muestra el diagrama de secuencia para este proceso de obtención y análisis
+de noticias financieras.
+
+#figure(
+  image("../Figures/Template/Chapter3/diagrama_secuencia7.png", width: 100%),
+  caption: [Diagrama de secuencia para obtener noticias financieras.],
+) <fig:seq_noticias_img>
+
+=== Diagrama de secuencia: Editar perfil de un usuario
+
+El usuario puede modificar su nombre, email o contraseña desde la página de
+perfil. Para cambiar la contraseña, es obligatorio introducir primero la actual.
+Si el usuario cambia el email, el backend comprueba que el nuevo email no
+pertenezca ya a otra cuenta. Tras pasar las validaciones, se actualizan los
+campos en la tabla `usuario` y se confirma la operación. En caso de error
+(contraseña actual incorrecta, email duplicado, etc.), se devuelve el mensaje
+correspondiente. La Figura 4.22 muestra el diagrama de secuencia para este
+proceso de edición del perfil de usuario.
+
+#figure(
+  image("../Figures/Template/Chapter3/diagrama_secuencia8.png", width: 100%),
+  caption: [Diagrama de secuencia para editar el perfil de un usuario.],
+) <fig:seq_perfil_img>
+
+Estos diagramas permiten visualizar de manera más clara la interacción entre los
+distintos componentes del sistema y sirven como base para la implementación
+descrita en los capítulos posteriores. Aunque el diseño preliminar siempre varía
+un poco al llevarlo a la práctica, tenerlos fue de gran ayuda para no perderme
+en la comunicación entre partes.
+
 
 == Diseño de la interfaz de usuario
 

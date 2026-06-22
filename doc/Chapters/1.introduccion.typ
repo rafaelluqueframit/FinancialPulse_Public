@@ -198,6 +198,3 @@ concreta del proyecto:
   alcanzados, se analiza el resultado final del proyecto, se comentan las
   principales lecciones aprendidas y se plantean posibles mejoras futuras.
 
-- *Bibliografía*.
-
-- *Apéndices*.
